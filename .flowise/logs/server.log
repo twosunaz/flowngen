@@ -1,0 +1,224 @@
+2025-02-17 10:29:57 [INFO]: Starting Flowise...
+2025-02-17 10:29:57 [INFO]: 📦 [server]: Data Source is initializing...
+2025-02-17 10:30:10 [INFO]: 📦 [server]: Data Source has been initialized!
+2025-02-17 10:30:10 [INFO]: ⚡️ [server]: Flowise Server is listening at :3000
+2025-02-17 10:32:16 [INFO]: ⬆️ POST /api/v1/chatflows
+2025-02-17 10:32:31 [INFO]: 🖊 PUT /api/v1/chatflows/e1852029-78c5-4a62-9f13-54d88a64cad4
+2025-02-17 11:18:15 [INFO]: Shutting down Flowise...
+2025-02-17 11:18:59 [INFO]: Starting Flowise...
+2025-02-17 11:18:59 [INFO]: 📦 [server]: Data Source is initializing...
+2025-02-17 11:19:10 [INFO]: 📦 [server]: Data Source has been initialized!
+2025-02-17 11:19:10 [INFO]: ⚡️ [server]: Flowise Server is listening at :3000
+2025-02-17 11:25:08 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-17 11:25:10 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-17 11:25:24 [INFO]: ⬆️ POST /api/v1/chatflows
+2025-02-17 11:25:26 [INFO]: 🖊 PUT /api/v1/chatflows/963943dd-eeac-4560-8c48-f319613779f3
+2025-02-17 14:50:00 [INFO]: ⬆️ POST /api/v1/export-import/import
+2025-02-17 14:50:25 [INFO]: ⬆️ POST /api/v1/export-import/import
+2025-02-17 14:51:35 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-17 14:51:50 [INFO]: ⬆️ POST /api/v1/chatflows
+2025-02-17 14:52:47 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-17 14:53:05 [INFO]: 🖊 PUT /api/v1/chatflows/e1852029-78c5-4a62-9f13-54d88a64cad4
+2025-02-17 14:53:15 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-17 14:53:20 [INFO]: 🖊 PUT /api/v1/chatflows/e1852029-78c5-4a62-9f13-54d88a64cad4
+2025-02-17 14:53:22 [INFO]: 🖊 PUT /api/v1/chatflows/e1852029-78c5-4a62-9f13-54d88a64cad4
+2025-02-17 14:55:28 [INFO]: ⬆️ POST /api/v1/credentials
+2025-02-17 14:56:47 [INFO]: ⬆️ POST /api/v1/credentials
+2025-02-17 14:56:53 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-17 14:57:15 [INFO]: 🖊 PUT /api/v1/chatflows/963943dd-eeac-4560-8c48-f319613779f3
+2025-02-17 14:57:20 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-17 14:59:27 [INFO]: ⬆️ POST /api/v1/credentials
+2025-02-17 14:59:51 [INFO]: 🖊 PUT /api/v1/chatflows/1e363ba8-1c8b-4ddf-9f0f-fea880a9343a
+2025-02-17 16:17:12 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-17 16:18:01 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-18 04:28:45 [INFO]: Shutting down Flowise...
+2025-02-18 04:29:27 [INFO]: Starting Flowise...
+2025-02-18 04:29:27 [INFO]: 📦 [server]: Data Source is initializing...
+2025-02-18 04:29:38 [INFO]: 📦 [server]: Data Source has been initialized!
+2025-02-18 04:29:38 [INFO]: ⚡️ [server]: Flowise Server is listening at :3000
+2025-02-18 04:34:43 [INFO]: Shutting down Flowise...
+2025-02-18 04:35:27 [INFO]: Starting Flowise...
+2025-02-18 04:35:27 [INFO]: 📦 [server]: Data Source is initializing...
+2025-02-18 04:35:38 [INFO]: 📦 [server]: Data Source has been initialized!
+2025-02-18 04:35:38 [INFO]: ⚡️ [server]: Flowise Server is listening at :3000
+2025-02-18 05:09:58 [INFO]: Shutting down Flowise...
+2025-02-18 05:10:12 [INFO]: Starting Flowise...
+2025-02-18 05:10:12 [INFO]: 📦 [server]: Data Source is initializing...
+2025-02-18 05:10:22 [INFO]: 📦 [server]: Data Source has been initialized!
+2025-02-18 05:10:22 [INFO]: ⚡️ [server]: Flowise Server is listening at :3000
+2025-02-18 05:12:51 [INFO]: Starting Flowise...
+2025-02-18 05:12:51 [INFO]: 📦 [server]: Data Source is initializing...
+2025-02-18 05:13:00 [INFO]: 📦 [server]: Data Source has been initialized!
+2025-02-18 05:13:00 [INFO]: ⚡️ [server]: Flowise Server is listening at :3000
+2025-02-18 06:52:06 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-18 06:52:13 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-19 04:10:54 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-19 04:11:13 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-19 04:11:42 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-19 04:12:34 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-19 06:06:39 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-19 07:29:27 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-19 07:29:33 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-19 07:29:42 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-19 07:29:45 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-19 07:29:48 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-19 07:30:01 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-20 22:19:28 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-22 10:36:04 [INFO]: ? HEAD /api/v1/phpinfo.php
+2025-02-23 23:29:36 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-23 23:50:23 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 00:04:41 [INFO]: ⬆️ POST /api/v1/credentials
+2025-02-24 01:19:12 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 01:21:07 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 01:53:40 [INFO]: ⬆️ POST /api/v1/credentials
+2025-02-24 01:55:28 [INFO]: ⬆️ POST /api/v1/credentials
+2025-02-24 02:09:11 [INFO]: ⬆️ POST /api/v1/credentials
+2025-02-24 03:31:28 [INFO]: ⬆️ POST /api/v1/node-config
+2025-02-24 03:32:03 [INFO]: ⬆️ POST /api/v1/chatflows
+2025-02-24 03:32:38 [INFO]: ⬆️ POST /api/v1/chatflows
+2025-02-24 03:33:26 [INFO]: ⬆️ POST /api/v1/chatflows
+2025-02-24 03:35:16 [INFO]: 🖊 PUT /api/v1/chatflows/6c76484a-bbf6-4199-a011-ca1dfe0f490b
+2025-02-24 03:35:19 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 03:35:22 [INFO]: 🖊 PUT /api/v1/chatflows/6c76484a-bbf6-4199-a011-ca1dfe0f490b
+2025-02-24 03:35:27 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 03:35:29 [INFO]: 🖊 PUT /api/v1/chatflows/b9c27c3c-8fc3-4a76-ae1a-edad8626060a
+2025-02-24 03:35:36 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 03:35:36 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 03:35:40 [INFO]: 🖊 PUT /api/v1/chatflows/ff838776-9f68-48dc-b5bf-c912f325e8fc
+2025-02-24 03:35:44 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 03:35:53 [INFO]: 🖊 PUT /api/v1/chatflows/6c76484a-bbf6-4199-a011-ca1dfe0f490b
+2025-02-24 03:35:57 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 03:36:09 [INFO]: 🖊 PUT /api/v1/chatflows/b9c27c3c-8fc3-4a76-ae1a-edad8626060a
+2025-02-24 03:36:18 [INFO]: 🖊 PUT /api/v1/chatflows/b9c27c3c-8fc3-4a76-ae1a-edad8626060a
+2025-02-24 03:36:21 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 03:36:21 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 03:37:21 [INFO]: 🖊 PUT /api/v1/chatflows/ff838776-9f68-48dc-b5bf-c912f325e8fc
+2025-02-24 03:37:57 [INFO]: 🖊 PUT /api/v1/chatflows/ff838776-9f68-48dc-b5bf-c912f325e8fc
+2025-02-24 03:38:02 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 03:38:05 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-24 03:38:15 [INFO]: 🖊 PUT /api/v1/chatflows/963943dd-eeac-4560-8c48-f319613779f3
+2025-02-24 03:38:19 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-25 21:54:05 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-25 21:57:43 [INFO]: ⬆️ POST /api/v1/internal-prediction/963943dd-eeac-4560-8c48-f319613779f3
+2025-02-25 21:58:30 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-25 21:58:38 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-25 22:04:48 [INFO]: ⬆️ POST /api/v1/chatflows
+2025-02-25 22:05:10 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-25 22:05:13 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-25 22:05:22 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-25 22:08:47 [INFO]: 🖊 PUT /api/v1/chatflows/53e7c465-277b-42ef-a498-e44312c5fe54
+2025-02-25 22:09:22 [INFO]: ⬆️ POST /api/v1/internal-prediction/963943dd-eeac-4560-8c48-f319613779f3
+2025-02-25 22:11:27 [INFO]: 🖊 PUT /api/v1/chatflows/53e7c465-277b-42ef-a498-e44312c5fe54
+2025-02-25 22:11:55 [INFO]: ⬆️ POST /api/v1/internal-prediction/53e7c465-277b-42ef-a498-e44312c5fe54
+2025-02-25 22:13:11 [INFO]: 🖊 PUT /api/v1/chatflows/53e7c465-277b-42ef-a498-e44312c5fe54
+2025-02-26 00:12:06 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-26 01:28:13 [INFO]: 🖊 PUT /api/v1/chatflows/e1852029-78c5-4a62-9f13-54d88a64cad4
+2025-02-27 00:35:34 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-02-27 00:36:17 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-03-09 21:34:27 [INFO]: ⬆️ POST /api/v1/livechat/sms-incoming/twilio
+2025-03-11 03:00:27 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-03-11 03:01:59 [INFO]: ⬆️ POST /api/v1/internal-prediction/963943dd-eeac-4560-8c48-f319613779f3
+2025-03-11 03:02:41 [INFO]: 🖊 PUT /api/v1/chatflows/963943dd-eeac-4560-8c48-f319613779f3
+2025-03-11 03:03:10 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-03-11 03:04:19 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-03-11 03:07:22 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-03-11 03:13:16 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-03-12 15:26:01 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2fetc%2f/cron.d
+2025-03-12 16:14:24 [INFO]: ⬆️ POST /api/v1/attachments/..%2F..%2F..%2F..%2F..%2F/usr
+2025-03-12 16:19:25 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2fetc/crontabs
+2025-03-12 16:33:33 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2fetc/crontabs
+2025-03-13 07:00:58 [INFO]: ⬆️ POST /api/v1/attachments/
+2025-03-13 07:50:09 [INFO]: ⬆️ POST /api/v1/attachments/test/..%2f..%2f..%2f..%2f..%2f.flowise/api.json
+2025-03-13 08:39:56 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2froot%2f/.flowise
+2025-03-13 08:39:57 [INFO]: ❌ DELETE /api/v1/apikey/1111
+2025-03-13 08:48:52 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2froot%2f/.flowise
+2025-03-13 08:48:52 [INFO]: ❌ DELETE /api/v1/apikey/1111
+2025-03-13 08:53:02 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2froot%2f/.flowise
+2025-03-13 08:53:03 [INFO]: ❌ DELETE /api/v1/apikey/1111
+2025-03-13 10:35:10 [INFO]: ⬆️ POST /api/v1/attachments/..%2F..%2F..%2F..%2F..%2F/usr
+2025-03-15 04:46:37 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2froot%2f/.flowise
+2025-03-15 04:46:38 [INFO]: ❌ DELETE /api/v1/apikey/1111
+2025-03-15 07:46:37 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2froot%2f/.flowise
+2025-03-15 07:46:37 [INFO]: ❌ DELETE /api/v1/apikey/1111
+2025-03-16 12:20:28 [INFO]: ⬆️ POST /api/v1/attachments/..%2F..%2F..%2F..%2F..%2Fetc/.%2F
+2025-03-16 12:22:38 [INFO]: ⬆️ POST /api/v1/attachments/..%2F..%2F..%2F..%2F..%2Fetc/.%2F
+2025-03-16 14:12:13 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2froot%2f/.flowise
+2025-03-16 14:12:14 [INFO]: ❌ DELETE /api/v1/apikey/1111
+2025-03-17 06:40:37 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2froot%2f/.flowise
+2025-03-17 07:53:49 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2froot%2f/.flowise
+2025-03-17 07:53:50 [INFO]: ❌ DELETE /api/v1/apikey/1111
+2025-03-18 12:16:08 [INFO]: ❌ DELETE /api/v1/apikey/1111
+2025-03-19 01:53:24 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2froot%2f/.flowise
+2025-03-21 06:35:20 [INFO]: ⬆️ POST /api/v1/attachments/..%2F..%2F..%2F..%2F..%2Fetc/.%2F
+2025-03-21 06:52:08 [INFO]: ⬆️ POST /api/v1/attachments/..%2F..%2F..%2F..%2F..%2Fetc/.%2F
+2025-03-21 07:44:51 [INFO]: ⬆️ POST /api/v1/attachments/..%2F..%2F..%2F..%2F..%2Fetc/.%2F
+2025-03-21 07:51:16 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2fetc/./
+2025-03-24 01:50:56 [INFO]: ⬆️ POST /api/v1/attachments/..%2F..%2F..%2F..%2F..%2Fetc/.%2F
+2025-03-24 01:54:31 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2f..%2f..%2fetc/./
+2025-03-24 01:59:08 [INFO]: ⬆️ POST /api/v1/attachments/..%2F..%2F..%2F..%2F..%2Fetc/.%2F
+2025-03-24 02:44:04 [INFO]: ⬆️ POST /api/v1/attachments/..%2F..%2F..%2F..%2F..%2Fetc/.%2F
+2025-03-24 02:48:29 [INFO]: ⬆️ POST /api/v1/attachments/..%2F..%2F..%2F..%2F..%2Fetc/.%2F
+2025-03-25 12:33:47 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2froot%2f/.flowise
+2025-03-25 12:33:48 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2froot%2f/.flowise
+2025-03-25 12:33:52 [INFO]: ⬆️ POST /api/v1/apikey
+2025-03-25 12:33:52 [INFO]: ⬆️ POST /api/v1/apikey
+2025-03-25 12:33:52 [INFO]: ⬆️ POST /api/v1/register
+2025-03-25 12:33:52 [INFO]: ⬆️ POST /api/v1/register
+2025-03-25 12:55:07 [INFO]: ⬆️ POST /api/v1/attachments/..%2f..%2f..%2froot%2f/.flowise
+2025-03-25 12:55:11 [INFO]: ⬆️ POST /api/v1/apikey
+2025-03-25 12:55:12 [INFO]: ⬆️ POST /api/v1/register
+2025-03-26 09:26:11 [INFO]: ⬆️ POST /api/v1/attachments/..%2F..%2F..%2F..%2F..%2Froot%2F.ssh/.%2F
+2025-04-02 01:27:49 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-04-02 01:28:13 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-04-02 01:29:33 [INFO]: ⬆️ POST /api/v1/internal-prediction/963943dd-eeac-4560-8c48-f319613779f3
+2025-04-02 01:31:02 [INFO]: 🖊 PUT /api/v1/chatflows/963943dd-eeac-4560-8c48-f319613779f3
+2025-04-02 01:31:27 [INFO]: ⬆️ POST /api/v1/chatflows
+2025-04-02 01:31:48 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-04-02 01:34:30 [INFO]: ⬆️ POST /api/v1/internal-prediction/963943dd-eeac-4560-8c48-f319613779f3
+2025-04-02 01:36:45 [INFO]: ⬆️ POST /api/v1/internal-prediction/0101304c-2e92-4787-b6e0-6fce4ccc71a2
+2025-04-02 01:36:45 [ERROR]: [server]: Error: Ending nodes not found
+Error: Ending nodes not found
+    at getEndingNodes (/usr/local/lib/node_modules/flowise/dist/utils/index.js:273:17)
+    at executeFlow (/usr/local/lib/node_modules/flowise/dist/utils/buildChatflow.js:251:52)
+    at utilBuildChatflow (/usr/local/lib/node_modules/flowise/dist/utils/buildChatflow.js:644:58)
+    at async createInternalPrediction (/usr/local/lib/node_modules/flowise/dist/controllers/internal-predictions/index.js:15:33)
+2025-04-02 01:37:04 [INFO]: 🖊 PUT /api/v1/chatflows/0101304c-2e92-4787-b6e0-6fce4ccc71a2
+2025-04-02 01:37:15 [INFO]: ⬆️ POST /api/v1/internal-prediction/0101304c-2e92-4787-b6e0-6fce4ccc71a2
+2025-04-02 01:40:34 [INFO]: ⬆️ POST /api/v1/internal-prediction/0101304c-2e92-4787-b6e0-6fce4ccc71a2
+2025-04-02 01:42:07 [INFO]: 🖊 PUT /api/v1/chatflows/0101304c-2e92-4787-b6e0-6fce4ccc71a2
+2025-04-02 01:42:22 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-04-02 01:42:28 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-04-02 01:42:51 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-04-02 01:45:02 [INFO]: ⬆️ POST /api/v1/internal-prediction/0101304c-2e92-4787-b6e0-6fce4ccc71a2
+2025-04-02 01:47:04 [INFO]: ⬆️ POST /api/v1/internal-prediction/0101304c-2e92-4787-b6e0-6fce4ccc71a2
+2025-04-02 01:51:38 [INFO]: 🖊 PUT /api/v1/chatflows/0101304c-2e92-4787-b6e0-6fce4ccc71a2
+2025-04-02 01:52:05 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-04-02 01:52:31 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-04-02 01:52:43 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-04-02 01:52:43 [INFO]: ⬆️ POST /api/v1/node-load-method/chatOpenAI
+2025-04-02 06:13:25 [INFO]: ⬆️ POST /api/v1/attachments/test/test/
+2025-04-02 06:13:25 [INFO]: ⬆️ POST /api/v1/attachments/test/test/
+2025-04-02 06:18:58 [INFO]: ⬆️ POST /api/v1/attachments/test/test/
+2025-04-03 03:36:12 [INFO]: Shutting down Flowise...
+2025-04-03 03:37:01 [INFO]: Starting Flowise...
+2025-04-03 03:37:01 [INFO]: 📦 [server]: Data Source is initializing...
+2025-04-03 03:37:12 [INFO]: 📦 [server]: Data Source has been initialized!
+2025-04-03 03:37:12 [INFO]: ⚡️ [server]: Flowise Server is listening at :3000
+2025-04-03 03:54:14 [INFO]: Shutting down Flowise...
+2025-04-03 03:54:41 [INFO]: Starting Flowise...
+2025-04-03 03:54:41 [INFO]: 📦 [server]: Data Source is initializing...
+2025-04-03 03:54:56 [INFO]: 📦 [server]: Data Source has been initialized!
+2025-04-03 03:54:56 [INFO]: ⚡️ [server]: Flowise Server is listening at :3012
+2025-04-03 03:58:18 [INFO]: ⬆️ POST /api/v1/node-load-method/awsChatBedrock
+2025-04-03 03:58:18 [INFO]: ⬆️ POST /api/v1/node-load-method/awsChatBedrock
+2025-04-03 03:58:24 [INFO]: ⬆️ POST /api/v1/chatflows
+2025-04-03 03:59:31 [INFO]: ⬆️ POST /api/v1/node-load-method/awsChatBedrock
+2025-04-03 03:59:31 [INFO]: ⬆️ POST /api/v1/node-load-method/awsChatBedrock
+2025-04-03 04:00:24 [INFO]: Shutting down Flowise...
+2025-04-03 04:00:38 [INFO]: Starting Flowise...
+2025-04-03 04:00:38 [INFO]: 📦 [server]: Data Source is initializing...
+2025-04-03 04:00:55 [INFO]: 📦 [server]: Data Source has been initialized!
+2025-04-03 04:00:55 [INFO]: ⚡️ [server]: Flowise Server is listening at :3010
+2025-04-03 04:02:27 [INFO]: ⬆️ POST /api/v1/node-load-method/awsChatBedrock
+2025-04-03 04:02:27 [INFO]: ⬆️ POST /api/v1/node-load-method/awsChatBedrock
+2025-04-03 04:02:35 [INFO]: 🖊 PUT /api/v1/chatflows/e0385d71-d96d-491d-a124-96e61be6eea1
