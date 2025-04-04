@@ -445,3 +445,43 @@ docker compose -f docker/docker-compose.yml --env-file /root/Flowise/instances/u
 docker compose -f Flowise/docker/docker-compose.yml --env-file /root/Flowise/instances/user_angel/.env up -d
 docker ps
 docker logs e488a3d72e98
+docker compose -f docker-compose.yml --env-file ./instances/user_angel/.env up -d
+docker compose -f docker-compose.yml --env-file ./instances/user_kenton/.env up -d
+docker compose -f docker-compose.yml --env-file ./instances/user_marcos/.env up -d
+git status
+git remote -v
+git remote remove origin
+git init
+git remote remove origin
+git remote add origin https://github.com/twosunaz/flowngen.git
+git remote -v
+git add .
+git commit -m "Pushing live server changes to repo"
+git push -u origin main
+git config --global user.name "twosunaz"
+git config --global user.email "twosunazofficial@gmail.com"
+git config --global --list
+git rm --cached Flowise
+git add .
+git commit -m "Live server version of Flowise, synced"
+git remote add origin https://github.com/twosunaz/flowngen.git
+git push -u origin main
+git push -u origin master
+# Remove log file with secrets from history
+git rm --cached .flowise/logs/server-requests.log.jsonl
+git commit --amend -CHEAD  # Amend the last commit without changing the message
+.flowise/logs/
+.flowise/storage/
+.flowise/database.sqlite
+git add .gitignore
+git commit -m "Ignore sensitive logs and local DB"
+git rm --cached .flowise/logs/server-requests.log.jsonl
+git ls-files | grep flowise
+sudo apt install git-filter-repo
+git filter-repo --path .flowise/logs/server-requests.log.jsonl --invert-paths
+echo ".flowise/logs/" >> .gitignore
+git add .gitignore
+git commit -m "Ignore logs directory to prevent accidental key commits"
+git push -f origin master
+git status
+docker ps
