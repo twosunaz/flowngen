@@ -42,9 +42,11 @@ import variablesRouter from './variables'
 import vectorRouter from './vectors'
 import verifyRouter from './verify'
 import versionRouter from './versions'
+import dockerRoutes from './dockerRoutes'
 
 const router = express.Router()
 
+router.use('/docker',dockerRoutes)
 router.use('/ping', pingRouter)
 router.use('/apikey', apikeyRouter)
 router.use('/assistants', assistantsRouter)

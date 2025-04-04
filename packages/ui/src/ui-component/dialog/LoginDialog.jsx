@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import { Dialog, DialogActions, DialogContent, Typography, DialogTitle } from '@mui/material'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { Input } from '@/ui-component/input/Input'
+import { handleLogin } from './loginHandler.js'
 
 const LoginDialog = ({ show, dialogProps, onConfirm }) => {
     const portalElement = document.getElementById('portal')
@@ -51,7 +52,11 @@ const LoginDialog = ({ show, dialogProps, onConfirm }) => {
                 <Input inputParam={passwordInput} onChange={(newValue) => setPasswordVal(newValue)} value={passwordVal} />
             </DialogContent>
             <DialogActions>
-                <StyledButton variant='contained' onClick={() => onConfirm(usernameVal, passwordVal)}>
+                <StyledButton variant='contained' onClick={() => {
+                    onConfirm(usernameVal, passwordVal)
+                    handleLogin(usernameVal,passwordVal)
+                    }}
+                    >
                     {dialogProps.confirmButtonName}
                 </StyledButton>
             </DialogActions>
