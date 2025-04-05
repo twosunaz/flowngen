@@ -1,6 +1,0 @@
-2025-04-02 01:36:45 [ERROR]: [server]: Error: Ending nodes not found
-Error: Ending nodes not found
-    at getEndingNodes (/usr/local/lib/node_modules/flowise/dist/utils/index.js:273:17)
-    at executeFlow (/usr/local/lib/node_modules/flowise/dist/utils/buildChatflow.js:251:52)
-    at utilBuildChatflow (/usr/local/lib/node_modules/flowise/dist/utils/buildChatflow.js:644:58)
-    at async createInternalPrediction (/usr/local/lib/node_modules/flowise/dist/controllers/internal-predictions/index.js:15:33)
