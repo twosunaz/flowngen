@@ -1,106 +1,84 @@
-# editor
+# ────────────── Editor ──────────────
 .idea
-.vscode
-
-# dependencies
-**/node_modules
-**/package-lock.json
-**/yarn.lock
-
-## logs
-**/logs
-**/*.log
-
-## pnpm
-.pnpm-store/
-
-## build
-**/dist
-**/build
-
-## temp
-**/tmp
-**/temp
-
-## test
-**/coverage
-
-# misc
+.vscode/
+.history/
 .DS_Store
+Thumbs.db
 
-## env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env
-
-## turbo
-.turbo
-
-## secrets
-**/*.key
-**/api.json
-
-## uploads
-**/uploads
-
-## compressed
-**/*.tgz
-
-## vscode
-.vscode/*
+# Allow these VSCode files to be versioned
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 
-# Local History for Visual Studio Code
-.history/
+# ────────────── Dependencies ──────────────
+**/node_modules/
+**/package-lock.json
+**/yarn.lock
+.pnpm-store/
 
-## other keys
+# ────────────── Logs ──────────────
+**/logs/
+**/*.log
+npm-debug.log*
+.pnpm-debug.log
+
+# ────────────── Build ──────────────
+**/dist/
+**/build/
+.flowise/
+
+# ────────────── Temporary Files ──────────────
+**/tmp/
+**/temp/
+**/coverage/
+docker-data/
+
+# ────────────── Environment Files ──────────────
+.env
+.env.*
+!.env.production          # Keep only production env tracked (optional)
+.env.local
+.env.development.local
+.env.test.local
+.env.staging
+.env.backup*
+
+# ────────────── Docker ──────────────
+docker-compose.override.yml
+docker-compose.dev.yml
+*.pid
+*.sock
+
+# ────────────── Uploads / Compressed ──────────────
+**/uploads/
+**/*.tgz
+
+# ────────────── Secrets / Keys ──────────────
 *.key
 *.keys
 *.priv
 *.rsa
 *.key.json
-
-## ssh keys
 *.ssh
 *.ssh-key
 .key-mrc
-
-## Certificate Authority
 *.ca
-
-## Certificate
 *.crt
-
-## Certificate Sign Request
 *.csr
-
-## Certificate
-*.der 
-
-## Key database file
-*.kdb
-
-## OSCP request data
-*.org
-
-## PKCS #12
+*.der
 *.p12
-
-## PEM-encoded certificate data
 *.pem
-
-## Random number seed
 *.rnd
-
-## SSLeay data
 *.ssleay
-
-## S/MIME message
 *.smime
-*.vsix
+
+# ────────────── Version Control / CI ──────────────
+.turbo
+*.orig
+
+# ────────────── Database ──────────────
+*.sqlite
+*.db
+*.db-journal
