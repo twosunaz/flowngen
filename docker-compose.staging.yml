@@ -1,0 +1,14 @@
+version: '3.1'
+
+services:
+    flowise-staging:
+        image: flowiseai/flowise
+        restart: always
+        env_file:
+            - ./docker/.env.staging
+
+        ports:
+            - '3001:3001'
+        volumes:
+            - ~/.flowise-staging:/root/.flowise
+        entrypoint: /bin/sh -c "sleep 3; flowise start"

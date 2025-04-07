@@ -29,6 +29,9 @@ RUN pnpm install
 
 RUN pnpm build
 
+# Create necessary directories
+RUN mkdir -p ./.flowise ./.flowise/logs ./.flowise/storage
+
 EXPOSE 3000
 
 CMD [ "pnpm", "start" ]
