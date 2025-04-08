@@ -11,6 +11,6 @@ services:
         ports:
             - '3001:3001'
         volumes:
-            - ${USERPROFILE}/.flowise-staging:/root/.flowise
-            - '${PWD}/docker/staging.db:/usr/src/staging.db'
+            - ~/.flowise-staging:/root/.flowise
+            - ./docker/staging.db:/usr/src/staging.db
         entrypoint: ['pnpm', 'start']
