@@ -1,8 +1,4 @@
-# # ------------- STAGING --------------
-
-
-
-
+# # ------------- PRODUCTION --------------
 
 
 
@@ -35,7 +31,7 @@ npm-debug.log*
 # ────────────── Build ──────────────
 **/dist/
 **/build/
-# .flowise/
+.flowise/
 
 # ────────────── Temporary Files ──────────────
 **/tmp/
@@ -44,18 +40,20 @@ npm-debug.log*
 docker-data/
 
 # # ────────────── Environment Files ──────────────
-# .env
-# .env.*
-# !.env.production          # Keep only production env tracked (optional)
-# .env.local
-# .env.development.local
-# .env.test.local
-# .env.staging
-# .env.backup*
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.staging
+.env.backup*
+!.env.production.example
 
 # # ────────────── Docker ──────────────
-# docker-compose.override.yml
-# docker-compose.dev.yml
+!.docker-compose.prod.yml
+!.docker/.env.production.example
+docker-compose.override.yml
+docker-compose.dev.yml
 *.pid
 *.sock
 
@@ -87,6 +85,6 @@ docker-data/
 *.orig
 
 # # ────────────── Database ──────────────
-# *.sqlite
-# *.db
-# *.db-journal
+*.sqlite
+*.db
+*.db-journal
