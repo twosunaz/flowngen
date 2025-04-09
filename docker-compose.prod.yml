@@ -1,0 +1,17 @@
+version: '3.1'
+
+services:
+    flowise-prod:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: always
+        env_file:
+            - ./docker/.env.production
+        ports:
+            - '3001:3001'
+        volumes:
+            - ~/.flowise-prod:/root/.flowise
+            # Only include below if you're actively using files from ./docker in app logic
+            # - ./docker:/usr/src/docker
+        entrypoint: ['pnpm', 'start']
