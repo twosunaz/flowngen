@@ -31,6 +31,7 @@ RUN pnpm build
 
 # Create necessary directories
 RUN mkdir -p ./.flowise ./.flowise/logs ./.flowise/storage
+RUN apt-get update && apt-get install -y postgresql-client
 
 EXPOSE 3000
 

@@ -21,7 +21,7 @@ const LoginDialog = ({ show, dialogProps, onConfirm }) => {
     }
     const [usernameVal, setUsernameVal] = useState('')
     const [passwordVal, setPasswordVal] = useState('')
-
+    console.log('initializing login')
     const handleLogin = async () => {
         try {
             const response = await fetch('/api/v1/auth/login', {
@@ -31,7 +31,7 @@ const LoginDialog = ({ show, dialogProps, onConfirm }) => {
             })
 
             const data = await response.json()
-
+            console.log('firing login auth')
             if (response.ok) {
                 console.log('✅ Login successful:', data)
                 onConfirm(usernameVal, passwordVal) // Optional: trigger success callback
