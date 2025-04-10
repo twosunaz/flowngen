@@ -1,0 +1,28 @@
+name: Deploy to DigitalOcean
+
+on:
+    push:
+        branches:
+            - release # or 'main', or any branch you want to trigger deployment from
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v3
+
+            - name: Set up SSH
+              uses: webfactory/ssh-agent@v0.9.0
+              with:
+                  ssh-private-key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+
+            - name: Deploy via SSH
+              run: |
+                  ssh -o StrictHostKeyChecking=no root@165.227.28.110 << 'EOF'
+                    cd /root/flowngen
+                    git pull origin release
+                    docker-compose -f docker-compose.prod.yml down
+                    docker-compose -f docker-compose.prod.yml up --build -d
+                  EOF
