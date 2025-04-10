@@ -12,6 +12,9 @@ RUN apk add --no-cache build-base cairo-dev pango-dev
 # Install Chromium
 RUN apk add --no-cache chromium
 
+RUN apk update && \
+    apk add --no-cache postgresql-client netcat-openbsd
+
 #install PNPM globaly
 RUN npm install -g pnpm
 
@@ -31,7 +34,7 @@ RUN pnpm build
 
 # Create necessary directories
 RUN mkdir -p ./.flowise ./.flowise/logs ./.flowise/storage
-RUN apt-get update && apt-get install -y postgresql-client
+
 
 EXPOSE 3000
 
