@@ -31,7 +31,7 @@ const LoginDialog = ({ show, dialogProps, onConfirm }) => {
             })
 
             const data = await response.json()
-            console.log('firing login auth')
+            console.log('firing login auth', data)
             if (response.ok) {
                 console.log('✅ Login successful:', data)
                 onConfirm(usernameVal, passwordVal) // Optional: trigger success callback
