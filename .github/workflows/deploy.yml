@@ -20,6 +20,21 @@ jobs:
                   chmod 600 ~/.ssh/id_rsa
                   ssh-keyscan -H 165.227.28.110 >> ~/.ssh/known_hosts
 
-            - name: SSH and pull latest changes
+            - name: SSH and pull latest changes with keep-alive
               run: |
-                  ssh root@165.227.28.110 'cd ~/flowngen && git pull origin release && docker-compose -f docker-compose.prod.yml up --build -d'
+                  ssh root@165.227.28.110 << 'EOF'
+                    cd ~/flowngen
+
+                    # Git pull
+                    git pull origin release
+
+                    # Start keep-alive logging in background
+                    ( while true; do echo "🌀 Still deploying..."; sleep 60; done ) &
+                    KEEP_ALIVE_PID=$!
+
+                    # Run docker build
+                    docker-compose -f docker-compose.prod.yml up --build -d
+
+                    # Stop keep-alive logging
+                    kill $KEEP_ALIVE_PID
+                  EOF

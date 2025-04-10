@@ -26,9 +26,9 @@ ENV NODE_OPTIONS=--max-old-space-size=8192
 WORKDIR /usr/src
 
 # Copy app source
-COPY . .
-
+COPY package.json pnpm-lock.yaml ./
 RUN pnpm install
+COPY . .
 
 RUN pnpm build
 

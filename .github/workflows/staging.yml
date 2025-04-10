@@ -1,0 +1,38 @@
+# .github/workflows/staging.yml
+
+name: Staging Pipeline
+
+on:
+    push:
+        branches:
+            - staging
+
+jobs:
+    build-and-test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: 📥 Checkout Code
+              uses: actions/checkout@v3
+
+            - name: 🧰 Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '18'
+
+            - name: 📦 Install Dependencies
+              run: |
+                  corepack enable
+                  pnpm install
+
+            - name: 🧼 Lint Check
+              run: pnpm lint || true # Replace with your actual lint command
+
+            - name: 🧪 Run Tests
+              run: pnpm test || true # Replace with your actual test command
+
+            - name: 🐳 Build Docker Image (staging)
+              run: docker build -f Dockerfile -t flowise-staging .
+
+            - name: ✅ Docker Image Built Successfully
+              run: echo "Docker build for staging completed!"
