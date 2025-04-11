@@ -5,38 +5,44 @@
 # docker run -d -p 3000:3000 flowise
 
 FROM node:20-alpine
+
+# Install base dependencies
 RUN apk add --update libc6-compat python3 make g++
-# needed for pdfjs-dist
+# Needed for pdfjs-dist
 RUN apk add --no-cache build-base cairo-dev pango-dev
 
 # Install Chromium
 RUN apk add --no-cache chromium
 
+# PostgreSQL client & networking tools
 RUN apk update && \
     apk add --no-cache postgresql-client netcat-openbsd
 
-    RUN npm install -g pnpm
-    RUN pnpm setup
-    ENV PATH="/root/.local/share/pnpm:${PATH}"
-    RUN pnpm add -g turbo
-    
+# Install pnpm globally and manually set PNPM_HOME (instead of using pnpm setup)
+RUN npm install -g pnpm
+ENV PNPM_HOME="/root/.local/share/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN pnpm add -g turbo
+
+# Puppeteer Chromium path setup
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
+# Increase memory allocation
 ENV NODE_OPTIONS=--max-old-space-size=8192
 
 WORKDIR /usr/src
 
-# Copy app source
+# Copy and install dependencies
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install
 COPY . .
 
+# Build project
 RUN pnpm build
 
-# Create necessary directories
+# Create persistent directories
 RUN mkdir -p ./.flowise ./.flowise/logs ./.flowise/storage
-
 
 EXPOSE 3000
 
