@@ -37,7 +37,7 @@ WORKDIR /usr/src
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install
 # Install vite for frontend builds
-RUN pnpm add -D vite
+RUN pnpm add -g vite
 COPY . .
 
 # Build project
