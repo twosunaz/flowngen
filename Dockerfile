@@ -34,10 +34,10 @@ ENV NODE_OPTIONS=--max-old-space-size=8192
 WORKDIR /usr/src
 
 # Copy and install dependencies
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install
 # Install vite for frontend builds
-RUN pnpm add -Dw vite
+RUN pnpm add -D vite
 COPY . .
 
 # Build project
