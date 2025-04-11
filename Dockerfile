@@ -27,6 +27,8 @@ COPY . .
 
 RUN pnpm install
 
+RUN pnpm build --filter flowise --verbose
+
 RUN pnpm build
 
 # Create necessary directories
