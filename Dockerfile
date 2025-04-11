@@ -27,7 +27,8 @@ COPY . .
 
 RUN pnpm install
 
-RUN pnpm exec turbo run build --filter=flowise -- --verbosity=2
+RUN pnpm exec turbo run --filter=flowise --verbosity=2 build
+
 ENV TURBO_LOG_ORDER stream
 ENV TURBO_LOG_PREFIX name
 
