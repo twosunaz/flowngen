@@ -28,6 +28,8 @@ COPY . .
 RUN pnpm install
 
 RUN pnpm exec turbo run build --filter=flowise -- --verbosity=2
+ENV TURBO_LOG_ORDER stream
+ENV TURBO_LOG_PREFIX name
 
 RUN pnpm build
 
