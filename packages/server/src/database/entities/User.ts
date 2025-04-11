@@ -6,20 +6,20 @@ export class User {
     id: string
 
     @Column({ type: 'varchar', length: 255, unique: true })
-    email: string
+    username: string
 
-    @Column({ type: 'varchar', length: 255 })
+    @Column({ type: 'varchar', length: 255, select: false })
     password: string
 
     @Column({ type: 'varchar', length: 100, nullable: true })
-    name: string
+    email: string
 
     @Column({ type: 'boolean', default: true })
     isActive: boolean
 
     @CreateDateColumn()
-    createdAt: Date
+    created_At: Date
 
     @UpdateDateColumn()
-    updatedAt: Date
+    updated_At: Date
 }
