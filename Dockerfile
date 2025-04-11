@@ -36,6 +36,8 @@ WORKDIR /usr/src
 # Copy and install dependencies
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install
+# Install vite for frontend builds
+RUN pnpm add -Dw vite
 COPY . .
 
 # Build project
