@@ -10,31 +10,37 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout repo
+            - name: 📥 Checkout repo
               uses: actions/checkout@v3
 
-            - name: Set up SSH
+            - name: 🔐 Set up SSH
               run: |
                   mkdir -p ~/.ssh
                   echo "${{ secrets.DO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
                   chmod 600 ~/.ssh/id_rsa
-                  ssh-keyscan -H 165.227.28.110 >> ~/.ssh/known_hosts
 
-            - name: SSH and pull latest changes with keep-alive
+                  echo "📡 Adding host to known_hosts..."
+                  ssh-keyscan -H 165.227.28.110 >> ~/.ssh/known_hosts || {
+                    echo "❌ ssh-keyscan failed"
+                    exit 1
+                  }
+
+            - name: 🚀 SSH and deploy with keep-alive
               run: |
                   ssh root@165.227.28.110 << 'EOF'
+                    set -e
+                    echo "📁 Navigating to project directory..."
                     cd ~/flowngen
 
-                    # Git pull
+                    echo "🔄 Pulling latest changes..."
                     git pull origin release
 
-                    # Start keep-alive logging in background
-                    ( while true; do echo "🌀 Still deploying..."; sleep 60; done ) &
+                    echo "🛠️ Building Docker containers..."
+                    ( while true; do echo "🌀 Still deploying at \$(date)..."; sleep 60; done ) & 
                     KEEP_ALIVE_PID=$!
 
-                    # Run docker build
                     docker-compose -f docker-compose.prod.yml up --build -d
 
-                    # Stop keep-alive logging
                     kill $KEEP_ALIVE_PID
+                    echo "✅ Deployment completed!"
                   EOF

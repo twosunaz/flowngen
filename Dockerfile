@@ -15,9 +15,11 @@ RUN apk add --no-cache chromium
 RUN apk update && \
     apk add --no-cache postgresql-client netcat-openbsd
 
-#install PNPM globaly
-RUN npm install -g pnpm
-
+    RUN npm install -g pnpm
+    RUN pnpm setup
+    ENV PATH="/root/.local/share/pnpm:${PATH}"
+    RUN pnpm add -g turbo
+    
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
