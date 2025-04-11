@@ -1,6 +1,2 @@
 packages:
     - 'packages/*'
-    - 'flowise'
-    - 'ui'
-    - 'components'
-    - 'api-documentation'
