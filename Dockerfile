@@ -27,7 +27,7 @@ COPY . .
 
 RUN pnpm install
 
-RUN pnpm build --filter flowise --verbose
+RUN pnpm build --filter=flowise -- --verbosity=2
 
 RUN pnpm build
 
