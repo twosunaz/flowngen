@@ -44,16 +44,20 @@ export class FieldTypes1710497452584 implements MigrationInterface {
             }
         }
 
-        // Add indexes if they don't exist
-        await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS "IDX_f56c36fe42894d57e5c664d229" ON "chat_message" ("chatflowid");
-        `)
-        await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS "IDX_f56c36fe42894d57e5c664d230" ON "chat_message_feedback" ("chatflowid");
-        `)
-        await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS "IDX_9acddcb7a2b51fe37669049fc6" ON "chat_message_feedback" ("chatId");
-        `)
+        // Index creation wrapped in safe checks
+        const createIndexIfColumnExists = async (table: string, column: string, indexName: string) => {
+            const columnExists = await queryRunner.query(`
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = '${table}' AND column_name = '${column}'
+            `)
+            if (columnExists.length > 0) {
+                await queryRunner.query(`CREATE INDEX IF NOT EXISTS "${indexName}" ON "${table}" ("${column}");`)
+            }
+        }
+
+        await createIndexIfColumnExists('chat_message', 'chatflowid', 'IDX_f56c36fe42894d57e5c664d229')
+        await createIndexIfColumnExists('chat_message_feedback', 'chatflowid', 'IDX_f56c36fe42894d57e5c664d230')
+        await createIndexIfColumnExists('chat_message_feedback', 'chatId', 'IDX_9acddcb7a2b51fe37669049fc6')
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
