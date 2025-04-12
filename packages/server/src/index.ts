@@ -155,7 +155,10 @@ export class App {
         const whitelistURLs = WHITELIST_URLS
         const URL_CASE_INSENSITIVE_REGEX: RegExp = /\/api\/v1\//i
         const URL_CASE_SENSITIVE_REGEX: RegExp = /\/api\/v1\//
-
+        console.log('[AUTH CHECK]', {
+            FLOWISE_USERNAME: process.env.FLOWISE_USERNAME,
+            FLOWISE_PASSWORD: process.env.FLOWISE_PASSWORD
+        })
         if (process.env.FLOWISE_USERNAME && process.env.FLOWISE_PASSWORD) {
             const username = process.env.FLOWISE_USERNAME
             const password = process.env.FLOWISE_PASSWORD
