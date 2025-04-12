@@ -2,31 +2,108 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class AddChatHistory1694658756136 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(
-            `ALTER TABLE "chat_message" ADD COLUMN IF NOT EXISTS "chatType" VARCHAR NOT NULL DEFAULT 'INTERNAL', ADD COLUMN IF NOT EXISTS "chatId" VARCHAR, ADD COLUMN IF NOT EXISTS "memoryType" VARCHAR, ADD COLUMN IF NOT EXISTS "sessionId" VARCHAR;`
-        )
-        const results: { id: string; chatflowid: string }[] = await queryRunner.query(`WITH RankedMessages AS (
-                SELECT
-                    "chatflowid",
-                    "id",
-                    "createdDate",
-                    ROW_NUMBER() OVER (PARTITION BY "chatflowid" ORDER BY "createdDate") AS row_num
-                FROM "chat_message"
-            )
-            SELECT "chatflowid", "id"
-            FROM RankedMessages
-            WHERE row_num = 1;`)
-        for (const chatMessage of results) {
-            await queryRunner.query(
-                `UPDATE "chat_message" SET "chatId" = '${chatMessage.id}' WHERE "chatflowid" = '${chatMessage.chatflowid}'`
-            )
+        await queryRunner.query(`
+            DO $$
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'chat_message' AND column_name = 'chatType'
+                ) THEN
+                    ALTER TABLE "chat_message" ADD COLUMN "chatType" VARCHAR NOT NULL DEFAULT 'INTERNAL';
+                END IF;
+
+                IF NOT EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'chat_message' AND column_name = 'chatId'
+                ) THEN
+                    ALTER TABLE "chat_message" ADD COLUMN "chatId" VARCHAR;
+                END IF;
+
+                IF NOT EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'chat_message' AND column_name = 'memoryType'
+                ) THEN
+                    ALTER TABLE "chat_message" ADD COLUMN "memoryType" VARCHAR;
+                END IF;
+
+                IF NOT EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'chat_message' AND column_name = 'sessionId'
+                ) THEN
+                    ALTER TABLE "chat_message" ADD COLUMN "sessionId" VARCHAR;
+                END IF;
+            END$$;
+        `)
+
+        // Ensure chatId exists before updating (skip query if it doesn't)
+        const columnsExist = await queryRunner.query(`
+            SELECT column_name FROM information_schema.columns
+            WHERE table_name = 'chat_message' AND column_name = 'chatId'
+        `)
+
+        const chatIdExists = columnsExist.length > 0
+
+        if (chatIdExists) {
+            const results: { id: string; chatflowid: string }[] = await queryRunner.query(`
+                WITH RankedMessages AS (
+                    SELECT
+                        "chatflowid",
+                        "id",
+                        "createdDate",
+                        ROW_NUMBER() OVER (PARTITION BY "chatflowid" ORDER BY "createdDate") AS row_num
+                    FROM "chat_message"
+                )
+                SELECT "chatflowid", "id"
+                FROM RankedMessages
+                WHERE row_num = 1;
+            `)
+
+            for (const chatMessage of results) {
+                await queryRunner.query(`
+                    UPDATE "chat_message"
+                    SET "chatId" = '${chatMessage.id}'
+                    WHERE "chatflowid" = '${chatMessage.chatflowid}';
+                `)
+            }
+
+            await queryRunner.query(`
+                ALTER TABLE "chat_message" ALTER COLUMN "chatId" SET NOT NULL;
+            `)
         }
-        await queryRunner.query(`ALTER TABLE "chat_message" ALTER COLUMN "chatId" SET NOT NULL;`)
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(
-            `ALTER TABLE "chat_message" DROP COLUMN "chatType", DROP COLUMN "chatId", DROP COLUMN "memoryType", DROP COLUMN "sessionId";`
-        )
+        await queryRunner.query(`
+            DO $$
+            BEGIN
+                IF EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'chat_message' AND column_name = 'chatType'
+                ) THEN
+                    ALTER TABLE "chat_message" DROP COLUMN "chatType";
+                END IF;
+
+                IF EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'chat_message' AND column_name = 'chatId'
+                ) THEN
+                    ALTER TABLE "chat_message" DROP COLUMN "chatId";
+                END IF;
+
+                IF EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'chat_message' AND column_name = 'memoryType'
+                ) THEN
+                    ALTER TABLE "chat_message" DROP COLUMN "memoryType";
+                END IF;
+
+                IF EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name = 'chat_message' AND column_name = 'sessionId'
+                ) THEN
+                    ALTER TABLE "chat_message" DROP COLUMN "sessionId";
+                END IF;
+            END$$;
+        `)
     }
 }

@@ -10,6 +10,9 @@ export class AddTypeToAssistant1733011290987 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "assistant" DROP COLUMN "type";`)
+        const columnExists = await queryRunner.hasColumn('assistant', 'type')
+        if (columnExists) {
+            await queryRunner.query(`ALTER TABLE "assistant" DROP COLUMN "type";`)
+        }
     }
 }
