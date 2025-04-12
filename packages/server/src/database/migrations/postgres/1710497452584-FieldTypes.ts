@@ -25,16 +25,23 @@ export class FieldTypes1710497452584 implements MigrationInterface {
         await alterIfExists('chat_message_feedback', 'chatId', 'varchar', 'varchar')
         await alterIfExists('chat_message_feedback', 'messageId', 'uuid', 'uuid')
 
-        // Add constraint if it doesn’t exist
-        const constraintExists = await queryRunner.query(`
-            SELECT 1 FROM information_schema.table_constraints
-            WHERE constraint_name = 'UQ_6352078b5a294f2d22179ea7956'
+        // Add constraint if messageId exists
+        const hasMessageId = await queryRunner.query(`
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'chat_message_feedback' AND column_name = 'messageId'
         `)
-        if (constraintExists.length === 0) {
-            await queryRunner.query(`
-                ALTER TABLE "chat_message_feedback"
-                ADD CONSTRAINT "UQ_6352078b5a294f2d22179ea7956" UNIQUE ("messageId")
+
+        if (hasMessageId.length > 0) {
+            const constraintExists = await queryRunner.query(`
+                SELECT 1 FROM information_schema.table_constraints
+                WHERE constraint_name = 'UQ_6352078b5a294f2d22179ea7956'
             `)
+            if (constraintExists.length === 0) {
+                await queryRunner.query(`
+                    ALTER TABLE "chat_message_feedback"
+                    ADD CONSTRAINT "UQ_6352078b5a294f2d22179ea7956" UNIQUE ("messageId")
+                `)
+            }
         }
 
         // Add indexes if they don't exist
