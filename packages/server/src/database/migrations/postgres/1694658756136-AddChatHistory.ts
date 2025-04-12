@@ -35,15 +35,19 @@ export class AddChatHistory1694658756136 implements MigrationInterface {
             END$$;
         `)
 
-        // Ensure chatId exists before updating (skip query if it doesn't)
         const columnsExist = await queryRunner.query(`
             SELECT column_name FROM information_schema.columns
             WHERE table_name = 'chat_message' AND column_name = 'chatId'
         `)
-
         const chatIdExists = columnsExist.length > 0
 
-        if (chatIdExists) {
+        const hasCreatedDate = await queryRunner.query(`
+            SELECT column_name FROM information_schema.columns
+            WHERE table_name = 'chat_message' AND column_name = 'createdDate'
+        `)
+        const createdDateExists = hasCreatedDate.length > 0
+
+        if (chatIdExists && createdDateExists) {
             const results: { id: string; chatflowid: string }[] = await queryRunner.query(`
                 WITH RankedMessages AS (
                     SELECT
@@ -69,6 +73,8 @@ export class AddChatHistory1694658756136 implements MigrationInterface {
             await queryRunner.query(`
                 ALTER TABLE "chat_message" ALTER COLUMN "chatId" SET NOT NULL;
             `)
+        } else {
+            console.warn(`[Migration] Skipping chatId population — "chatId" or "createdDate" column not found.`)
         }
     }
 
