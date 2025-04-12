@@ -25,7 +25,10 @@ export const login = async (req: Request, res: Response) => {
 
         const userRepository = appServer.AppDataSource.getRepository(User)
 
-        const user = await userRepository.findOne({ where: { username } })
+        const user = await userRepository.findOne({
+            where: { username },
+            select: ['id', 'username', 'password', 'email', 'isActive', 'created_At', 'updated_At'] // explicitly include password
+        })
 
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({
@@ -34,10 +37,12 @@ export const login = async (req: Request, res: Response) => {
             })
         }
 
+        const { password: _, ...safeUser } = user
+
         return res.status(200).json({
             success: true,
             message: 'Login successful',
-            user
+            user: safeUser
         })
     } catch (err) {
         console.error(`[Auth] Login error:`, err)
