@@ -75,6 +75,7 @@ const Chatflows = () => {
         const fetchChatflows = async () => {
             try {
                 const token = localStorage.getItem('token')
+                console.log('Token sent to backend:', token)
                 const response = await fetch(`${baseURL}/api/v1/chatflows`, {
                     headers: {
                         Authorization: `Bearer ${token}`

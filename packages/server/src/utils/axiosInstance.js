@@ -1,18 +1,19 @@
-// src/utils/axiosInstance.js or @/utils/axios.js
-
 import axios from 'axios'
-import { baseURL } from '@/store/constant'
 
 const api = axios.create({
-    baseURL: baseURL || '/api/v1'
+    baseURL: '/api/v1'
 })
 
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token')
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
-})
+// Add a request interceptor to include JWT
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token')
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`
+        }
+        return config
+    },
+    (error) => Promise.reject(error)
+)
 
 export default api

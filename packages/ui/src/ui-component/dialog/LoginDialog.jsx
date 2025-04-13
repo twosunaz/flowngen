@@ -45,9 +45,6 @@ const LoginDialog = ({ show, dialogProps, onConfirm }) => {
 
                 // Trigger whatever action you want next
                 onConfirm(usernameVal, passwordVal)
-
-                // 🔄 Reload to refresh protected views
-                window.location.reload()
             } else {
                 console.error('❌ Login failed:', data.message)
             }
