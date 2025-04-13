@@ -47,7 +47,7 @@ import { verifyToken } from '../middlewares/verifyToken'
 
 const router = express.Router()
 
-// Protected Routers under  verifyToken,
+// Protected Routers under verifyToken
 router.use('/auth', authRouter)
 router.use('/ping', pingRouter)
 router.use('/apikey', apikeyRouter)
