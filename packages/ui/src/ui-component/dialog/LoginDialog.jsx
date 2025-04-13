@@ -35,10 +35,21 @@ const LoginDialog = ({ show, dialogProps, onConfirm }) => {
 
             if (response.ok) {
                 console.log('✅ Login successful:', data)
-                onConfirm(usernameVal, passwordVal) // Optional: trigger success callback
+
+                // 🔐 Store the JWT token
+                localStorage.setItem('token', data.token)
+                console.log('Stored token:', data.token)
+
+                // Optional: also store user if needed
+                localStorage.setItem('user', JSON.stringify(data.user))
+
+                // Trigger whatever action you want next
+                onConfirm(usernameVal, passwordVal)
+
+                // 🔄 Reload to refresh protected views
+                window.location.reload()
             } else {
                 console.error('❌ Login failed:', data.message)
-                // Optional: Show error message on UI
             }
         } catch (error) {
             console.error('🚨 Network error:', error)

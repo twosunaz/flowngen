@@ -43,6 +43,7 @@ import vectorRouter from './vectors'
 import verifyRouter from './verify'
 import versionRouter from './versions'
 import authRouter from './auth'
+import { verifyToken } from '../middlewares/verifyToken'
 
 const router = express.Router()
 
@@ -90,5 +91,11 @@ router.use('/vector', vectorRouter)
 router.use('/verify', verifyRouter)
 router.use('/version', versionRouter)
 router.use('/upsert-history', upsertHistoryRouter)
+
+// Protected routes
+router.use('/chatflows', verifyToken, chatflowsRouter)
+router.use('/chatflows-streaming', verifyToken, chatflowsStreamingRouter)
+router.use('/chatmessage', verifyToken, chatMessageRouter)
+router.use('/assistants', verifyToken, assistantsRouter)
 
 export default router

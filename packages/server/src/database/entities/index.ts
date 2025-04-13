@@ -13,7 +13,7 @@ import { ApiKey } from './ApiKey'
 import { CustomTemplate } from './CustomTemplate'
 import { User } from './User'
 
-export const entities = {
+export const entities = [
     ChatFlow,
     ChatMessage,
     ChatMessageFeedback,
@@ -28,4 +28,4 @@ export const entities = {
     ApiKey,
     CustomTemplate,
     User
-}
+]
