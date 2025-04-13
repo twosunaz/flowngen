@@ -47,14 +47,15 @@ import { verifyToken } from '../middlewares/verifyToken'
 
 const router = express.Router()
 
+// Protected Routers under  verifyToken,
 router.use('/auth', authRouter)
 router.use('/ping', pingRouter)
 router.use('/apikey', apikeyRouter)
-router.use('/assistants', assistantsRouter)
+router.use('/assistants', verifyToken, assistantsRouter)
 router.use('/attachments', attachmentsRouter)
-router.use('/chatflows', chatflowsRouter)
-router.use('/chatflows-streaming', chatflowsStreamingRouter)
-router.use('/chatmessage', chatMessageRouter)
+router.use('/chatflows', verifyToken, chatflowsRouter)
+router.use('/chatflows-streaming', verifyToken, chatflowsStreamingRouter)
+router.use('/chatmessage', verifyToken, chatMessageRouter)
 router.use('/components-credentials', componentsCredentialsRouter)
 router.use('/components-credentials-icon', componentsCredentialsIconRouter)
 router.use('/chatflows-uploads', chatflowsUploadsRouter)
@@ -91,11 +92,5 @@ router.use('/vector', vectorRouter)
 router.use('/verify', verifyRouter)
 router.use('/version', versionRouter)
 router.use('/upsert-history', upsertHistoryRouter)
-
-// Protected routes
-router.use('/chatflows', verifyToken, chatflowsRouter)
-router.use('/chatflows-streaming', verifyToken, chatflowsStreamingRouter)
-router.use('/chatmessage', verifyToken, chatMessageRouter)
-router.use('/assistants', verifyToken, assistantsRouter)
 
 export default router

@@ -17,12 +17,6 @@ import { StyledButton } from '@/ui-component/button/StyledButton'
 import ViewHeader from '@/layout/MainLayout/ViewHeader'
 import ErrorBoundary from '@/ErrorBoundary'
 
-// API
-import chatflowsApi from '@/api/chatflows'
-
-// Hooks
-import useApi from '@/hooks/useApi'
-
 // const
 import { baseURL } from '@/store/constant'
 
@@ -37,12 +31,12 @@ const Chatflows = () => {
 
     const [isLoading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [data, setData] = useState([])
     const [images, setImages] = useState({})
     const [search, setSearch] = useState('')
     const [loginDialogOpen, setLoginDialogOpen] = useState(false)
     const [loginDialogProps, setLoginDialogProps] = useState({})
 
-    const getAllChatflowsApi = useApi(chatflowsApi.getAllChatflows)
     const [view, setView] = useState(localStorage.getItem('flowDisplayStyle') || 'card')
 
     const handleChange = (event, nextView) => {
@@ -78,52 +72,57 @@ const Chatflows = () => {
     }
 
     useEffect(() => {
-        getAllChatflowsApi.request()
+        const fetchChatflows = async () => {
+            try {
+                const token = localStorage.getItem('token')
+                const response = await fetch(`${baseURL}/api/v1/chatflows`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                if (!response.ok) throw new Error('Unauthorized')
+                const result = await response.json()
+                setData(result)
+            } catch (err) {
+                if (err.message === 'Unauthorized') {
+                    setLoginDialogProps({
+                        title: 'Login',
+                        confirmButtonName: 'Login'
+                    })
+                    setLoginDialogOpen(true)
+                } else {
+                    setError(err)
+                }
+            } finally {
+                setLoading(false)
+            }
+        }
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        fetchChatflows()
     }, [])
 
     useEffect(() => {
-        if (getAllChatflowsApi.error) {
-            if (getAllChatflowsApi.error?.response?.status === 401) {
-                setLoginDialogProps({
-                    title: 'Login',
-                    confirmButtonName: 'Login'
-                })
-                setLoginDialogOpen(true)
-            } else {
-                setError(getAllChatflowsApi.error)
-            }
-        }
-    }, [getAllChatflowsApi.error])
-
-    useEffect(() => {
-        setLoading(getAllChatflowsApi.loading)
-    }, [getAllChatflowsApi.loading])
-
-    useEffect(() => {
-        if (getAllChatflowsApi.data) {
+        if (data) {
             try {
-                const chatflows = getAllChatflowsApi.data
-                const images = {}
-                for (let i = 0; i < chatflows.length; i += 1) {
-                    const flowDataStr = chatflows[i].flowData
+                const imagesMap = {}
+                for (let i = 0; i < data.length; i += 1) {
+                    const flowDataStr = data[i].flowData
                     const flowData = JSON.parse(flowDataStr)
                     const nodes = flowData.nodes || []
-                    images[chatflows[i].id] = []
+                    imagesMap[data[i].id] = []
                     for (let j = 0; j < nodes.length; j += 1) {
                         const imageSrc = `${baseURL}/api/v1/node-icon/${nodes[j].data.name}`
-                        if (!images[chatflows[i].id].includes(imageSrc)) {
-                            images[chatflows[i].id].push(imageSrc)
+                        if (!imagesMap[data[i].id].includes(imageSrc)) {
+                            imagesMap[data[i].id].push(imageSrc)
                         }
                     }
                 }
-                setImages(images)
+                setImages(imagesMap)
             } catch (e) {
                 console.error(e)
             }
         }
-    }, [getAllChatflowsApi.data])
+    }, [data])
 
     return (
         <MainCard>
@@ -170,7 +169,7 @@ const Chatflows = () => {
                     </ViewHeader>
                     {!view || view === 'card' ? (
                         <>
-                            {isLoading && !getAllChatflowsApi.data ? (
+                            {isLoading && !data ? (
                                 <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
                                     <Skeleton variant='rounded' height={160} />
                                     <Skeleton variant='rounded' height={160} />
@@ -178,23 +177,23 @@ const Chatflows = () => {
                                 </Box>
                             ) : (
                                 <Box display='grid' gridTemplateColumns='repeat(3, 1fr)' gap={gridSpacing}>
-                                    {getAllChatflowsApi.data?.filter(filterFlows).map((data, index) => (
-                                        <ItemCard key={index} onClick={() => goToCanvas(data)} data={data} images={images[data.id]} />
+                                    {data?.filter(filterFlows).map((flow, index) => (
+                                        <ItemCard key={index} onClick={() => goToCanvas(flow)} data={flow} images={images[flow.id]} />
                                     ))}
                                 </Box>
                             )}
                         </>
                     ) : (
                         <FlowListTable
-                            data={getAllChatflowsApi.data}
+                            data={data}
                             images={images}
                             isLoading={isLoading}
                             filterFunction={filterFlows}
-                            updateFlowsApi={getAllChatflowsApi}
+                            updateFlowsApi={{ request: () => {}, data, setData }}
                             setError={setError}
                         />
                     )}
-                    {!isLoading && (!getAllChatflowsApi.data || getAllChatflowsApi.data.length === 0) && (
+                    {!isLoading && (!data || data.length === 0) && (
                         <Stack sx={{ alignItems: 'center', justifyContent: 'center' }} flexDirection='column'>
                             <Box sx={{ p: 2, height: 'auto' }}>
                                 <img
