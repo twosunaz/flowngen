@@ -77,16 +77,7 @@ export const init = async (): Promise<void> => {
             })
             break
         default:
-            homePath = process.env.DATABASE_PATH ?? flowisePath
-            appDataSource = new DataSource({
-                type: 'sqlite',
-                database: path.resolve(homePath, 'database.sqlite'),
-                synchronize: false,
-                migrationsRun: false,
-                entities: Object.values(entities),
-                migrations: sqliteMigrations
-            })
-            break
+            throw new Error(`❌ Unsupported DATABASE_TYPE: ${process.env.DATABASE_TYPE}. Please set to 'postgres', 'mysql', etc.`)
     }
 }
 
