@@ -72,10 +72,20 @@ const Chatflows = () => {
     }
 
     useEffect(() => {
+        const token = localStorage.getItem('token')
+        if (!token) {
+            // No token means we skip the request and just show login dialog
+            setLoginDialogProps({
+                title: 'Login',
+                confirmButtonName: 'Login'
+            })
+            setLoginDialogOpen(true)
+            setLoading(false)
+            return
+        }
+
         const fetchChatflows = async () => {
             try {
-                const token = localStorage.getItem('token')
-                console.log('Token sent to backend:', token)
                 const response = await fetch(`${baseURL}/api/v1/chatflows`, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -85,14 +95,9 @@ const Chatflows = () => {
                 const result = await response.json()
                 setData(result)
             } catch (err) {
+                setError(err)
                 if (err.message === 'Unauthorized') {
-                    setLoginDialogProps({
-                        title: 'Login',
-                        confirmButtonName: 'Login'
-                    })
                     setLoginDialogOpen(true)
-                } else {
-                    setError(err)
                 }
             } finally {
                 setLoading(false)
