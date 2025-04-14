@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key'
-
+console.log('🟢 verifyToken middleware loaded')
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     console.log('[verifyToken] Incoming auth header:', req.headers['authorization'])
     const authHeader = req.headers['authorization']
