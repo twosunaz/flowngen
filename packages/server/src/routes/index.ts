@@ -1,3 +1,4 @@
+console.log('[Router Init] Mounting /chatflows with verifyToken')
 import express from 'express'
 import apikeyRouter from './apikey'
 import assistantsRouter from './assistants'
@@ -98,5 +99,10 @@ router.use('/vector', vectorRouter)
 router.use('/verify', verifyRouter)
 router.use('/version', versionRouter)
 router.use('/upsert-history', upsertHistoryRouter)
+
+router.use((req, res, next) => {
+    console.log('⚠️ [Router] Unhandled route:', req.path)
+    next()
+})
 
 export default router

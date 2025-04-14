@@ -1,4 +1,5 @@
 // middleware/verifyToken.ts
+console.log('🔥 [verifyToken] Middleware triggered')
 import jwt from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
 
