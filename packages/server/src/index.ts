@@ -4,6 +4,7 @@ import path from 'path'
 import cors from 'cors'
 import http from 'http'
 import { DataSource } from 'typeorm'
+import type { DataSourceOptions } from 'typeorm'
 import { MODE } from './Interface'
 import { getNodeModulesPackagePath, getEncryptionKey } from './utils'
 import logger, { expressRequestLogger } from './utils/logger'
@@ -69,6 +70,11 @@ export class App {
         try {
             await this.AppDataSource.initialize()
             logger.info('📦 [server]: Data Source is initializing...')
+
+            const options = this.AppDataSource.options as DataSourceOptions & { host?: string }
+            logger.info(`[DB] Connected to: ${this.AppDataSource.options.type}`)
+            logger.info(`[DB] Host: ${options.host || 'N/A (not applicable to SQLite)'}`)
+            logger.info(`[DB] Name: ${options.database}`)
 
             // Run Migrations Scripts
             await this.AppDataSource.runMigrations({ transaction: 'each' })
