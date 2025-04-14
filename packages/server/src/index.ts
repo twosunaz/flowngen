@@ -201,19 +201,29 @@ export class App {
                 if (URL_CASE_INSENSITIVE_REGEX.test(req.path)) {
                     // Step 2: Check if the req path is case sensitive
                     if (URL_CASE_SENSITIVE_REGEX.test(req.path)) {
-                        // Step 3: Check if the req path is in the whitelist
                         const isWhitelisted = whitelistURLs.some((url) => req.path.startsWith(url))
-                        if (isWhitelisted) {
-                            next()
-                        } else if (req.headers['x-request-from'] === 'internal') {
-                            next()
-                        } else {
-                            const isKeyValidated = await validateAPIKey(req)
-                            if (!isKeyValidated) {
-                                return res.status(401).json({ error: 'Unauthorized Access' })
-                            }
-                            next()
+
+                        // 🔑 Add this short-circuit for JWTs
+                        const authHeader = req.headers['authorization']
+                        if (authHeader && authHeader.startsWith('Bearer ')) {
+                            console.log('🔓 Skipping API key check — JWT Bearer token detected')
+                            return next()
                         }
+
+                        if (isWhitelisted) {
+                            return next()
+                        }
+
+                        if (req.headers['x-request-from'] === 'internal') {
+                            return next()
+                        }
+
+                        const isKeyValidated = await validateAPIKey(req)
+                        if (!isKeyValidated) {
+                            return res.status(401).json({ error: 'Unauthorized Access' })
+                        }
+
+                        return next()
                     } else {
                         return res.status(401).json({ error: 'Unauthorized Access' })
                     }
