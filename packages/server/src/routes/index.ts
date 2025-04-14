@@ -46,6 +46,12 @@ import authRouter from './auth'
 import { verifyToken } from '../middlewares/verifyToken'
 
 const router = express.Router()
+router.use((req, res, next) => {
+    console.log('🛰 Hit router middleware for:', req.path)
+    next()
+})
+console.log('✅ [Router] Registering /chatflows with verifyToken')
+console.log('[DEBUG] typeof verifyToken:', typeof verifyToken) // should log "function"
 
 // Protected Routers under verifyToken
 router.use('/auth', authRouter)
