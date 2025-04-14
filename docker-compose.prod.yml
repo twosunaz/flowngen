@@ -5,14 +5,7 @@ services:
             dockerfile: Dockerfile
         restart: always
         env_file:
-            - ./docker/.env.production
-        environment:
-            - DATABASE_TYPE=postgres
-            - DATABASE_HOST=${DATABASE_HOST}
-            - DATABASE_PORT=${DATABASE_PORT}
-            - DATABASE_USER=${DATABASE_USER}
-            - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-            - DATABASE_NAME=${DATABASE_NAME}
+            - .env.production
         ports:
             - '3001:3001'
         volumes:
