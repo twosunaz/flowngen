@@ -47,6 +47,8 @@ jobs:
                   SECRETKEY_PATH=/root/.flowise
                   LOG_PATH=/root/.flowise/logs
                   EOF
+            - name: 📦 Upload .env.production to server
+              run: scp -o StrictHostKeyChecking=no .env.production root@165.227.28.110:/root/flowngen/.env.production
 
             - name: 🚀 SSH and deploy with keep-alive
               run: |
