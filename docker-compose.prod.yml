@@ -4,8 +4,6 @@ services:
             context: .
             dockerfile: Dockerfile
         restart: always
-        env_file:
-            - .env.production
         ports:
             - '3001:3001'
         volumes:
