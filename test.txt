@@ -1,1 +1,1 @@
-removed env variables from docker-compose
+test
