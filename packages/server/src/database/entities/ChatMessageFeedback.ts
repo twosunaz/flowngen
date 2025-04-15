@@ -1,6 +1,7 @@
 /* eslint-disable */
-import { Entity, Column, CreateDateColumn, PrimaryGeneratedColumn, Index, Unique } from 'typeorm'
+import { Entity, Column, CreateDateColumn, PrimaryGeneratedColumn, Index, Unique, ManyToOne, JoinColumn } from 'typeorm'
 import { IChatMessageFeedback, ChatMessageRatingType } from '../../Interface'
+import { User } from './User'
 
 @Entity()
 @Unique(['messageId'])
@@ -28,4 +29,12 @@ export class ChatMessageFeedback implements IChatMessageFeedback {
     @Column({ type: 'timestamp' })
     @CreateDateColumn()
     createdDate: Date
+
+    // 🔐 Multi-tenancy: link to User
+    @Column({ type: 'uuid' })
+    userId: string
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'userId' })
+    user: User
 }

@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm'
 import { DocumentStoreStatus, IDocumentStore } from '../../Interface'
+import { User } from './User'
 
 @Entity()
 export class DocumentStore implements IDocumentStore {
@@ -37,4 +38,12 @@ export class DocumentStore implements IDocumentStore {
 
     @Column({ nullable: true, type: 'text' })
     recordManagerConfig: string | null
+
+    // 🔐 Multi-tenancy: associate with User
+    @Column({ type: 'uuid' })
+    userId: string
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'userId' })
+    user: User
 }

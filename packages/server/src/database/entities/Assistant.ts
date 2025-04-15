@@ -1,6 +1,7 @@
 /* eslint-disable */
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm'
 import { AssistantType, IAssistant } from '../../Interface'
+import { User } from './User'
 
 @Entity()
 export class Assistant implements IAssistant {
@@ -26,4 +27,12 @@ export class Assistant implements IAssistant {
     @Column({ type: 'timestamp' })
     @UpdateDateColumn()
     updatedDate: Date
+
+    // 🔐 Multi-tenancy: link to User
+    @Column({ type: 'uuid' })
+    userId: string
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'userId' })
+    user: User
 }

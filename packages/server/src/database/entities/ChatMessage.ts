@@ -1,6 +1,7 @@
 /* eslint-disable */
-import { Entity, Column, CreateDateColumn, PrimaryGeneratedColumn, Index } from 'typeorm'
+import { Entity, Column, CreateDateColumn, PrimaryGeneratedColumn, Index, ManyToOne, JoinColumn } from 'typeorm'
 import { IChatMessage, MessageType } from '../../Interface'
+import { User } from './User'
 
 @Entity()
 export class ChatMessage implements IChatMessage {
@@ -59,4 +60,12 @@ export class ChatMessage implements IChatMessage {
 
     @Column({ nullable: true, type: 'text' })
     followUpPrompts?: string
+
+    // 🔐 Multi-tenancy: link to User
+    @Column({ type: 'uuid' })
+    userId: string
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'userId' })
+    user: User
 }

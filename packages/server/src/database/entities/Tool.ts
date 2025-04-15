@@ -1,6 +1,7 @@
 /* eslint-disable */
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm'
 import { ITool } from '../../Interface'
+import { User } from './User'
 
 @Entity()
 export class Tool implements ITool {
@@ -25,11 +26,17 @@ export class Tool implements ITool {
     @Column({ nullable: true, type: 'text' })
     func?: string
 
-    @Column({ type: 'timestamp' })
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamp' })
     createdDate: Date
 
-    @Column({ type: 'timestamp' })
-    @UpdateDateColumn()
+    @UpdateDateColumn({ type: 'timestamp' })
     updatedDate: Date
+
+    // 🔐 Multi-tenancy: associate tool with user
+    @Column({ type: 'uuid' })
+    userId: string
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'userId' })
+    user: User
 }

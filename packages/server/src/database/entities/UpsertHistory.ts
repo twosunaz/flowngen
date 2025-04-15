@@ -1,6 +1,7 @@
 /* eslint-disable */
-import { Entity, Column, PrimaryGeneratedColumn, Index, CreateDateColumn } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, Index, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm'
 import { IUpsertHistory } from '../../Interface'
+import { User } from './User'
 
 @Entity()
 export class UpsertHistory implements IUpsertHistory {
@@ -19,4 +20,12 @@ export class UpsertHistory implements IUpsertHistory {
 
     @CreateDateColumn()
     date: Date
+
+    // 🔐 Multi-tenancy: associate upsert history with user
+    @Column({ type: 'uuid' })
+    userId: string
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'userId' })
+    user: User
 }

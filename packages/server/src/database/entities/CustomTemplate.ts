@@ -1,5 +1,6 @@
 import { ICustomTemplate } from '../../Interface'
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm'
+import { User } from './User'
 
 @Entity('custom_template')
 export class CustomTemplate implements ICustomTemplate {
@@ -34,4 +35,12 @@ export class CustomTemplate implements ICustomTemplate {
     @Column({ type: 'timestamp' })
     @UpdateDateColumn()
     updatedDate: Date
+
+    // 🔐 Multi-tenancy: link to User
+    @Column({ type: 'uuid' })
+    userId: string
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'userId' })
+    user: User
 }
