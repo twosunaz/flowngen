@@ -1,6 +1,6 @@
-import express from 'express'
 import upsertHistoryController from '../../controllers/upsert-history'
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // CREATE
 

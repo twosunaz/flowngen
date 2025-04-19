@@ -1,6 +1,6 @@
-import express from 'express'
 import chatMessageController from '../../controllers/chat-messages'
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // CREATE
 router.post(['/', '/:id'], chatMessageController.createChatMessage)

@@ -1,6 +1,6 @@
-import express from 'express'
 import feedbackController from '../../controllers/feedback'
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // CREATE
 router.post(['/', '/:id'], feedbackController.createChatMessageFeedbackForChatflow)

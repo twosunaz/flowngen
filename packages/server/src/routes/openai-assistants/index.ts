@@ -1,6 +1,6 @@
-import express from 'express'
 import openaiAssistantsController from '../../controllers/openai-assistants'
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // CREATE
 

@@ -1,7 +1,6 @@
-import express from 'express'
 import statsController from '../../controllers/stats'
-
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // READ
 router.get(['/', '/:id'], statsController.getChatflowStats)

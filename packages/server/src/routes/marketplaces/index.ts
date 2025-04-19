@@ -1,6 +1,6 @@
-import express from 'express'
 import marketplacesController from '../../controllers/marketplaces'
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // READ
 router.get('/templates', marketplacesController.getAllTemplates)

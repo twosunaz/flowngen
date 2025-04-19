@@ -1,8 +1,7 @@
-import express from 'express'
 import vectorsController from '../../controllers/vectors'
 import { getMulterStorage } from '../../utils'
-
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // CREATE
 router.post(

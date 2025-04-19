@@ -875,18 +875,23 @@ const _saveChunksToStorage = async (
                 }
                 return acc
             }, 0)
-            response.chunks.map(async (chunk: IDocument, index: number) => {
-                const docChunk: DocumentStoreFileChunk = {
-                    docId: newLoaderId,
-                    storeId: data.storeId || '',
-                    id: uuidv4(),
-                    chunkNo: index + 1,
-                    pageContent: chunk.pageContent,
-                    metadata: JSON.stringify(chunk.metadata)
-                }
-                const dChunk = appDataSource.getRepository(DocumentStoreFileChunk).create(docChunk)
-                await appDataSource.getRepository(DocumentStoreFileChunk).save(dChunk)
-            })
+            await Promise.all(
+                response.chunks.map(async (chunk, index) => {
+                    const docChunk: DocumentStoreFileChunk = {
+                        docId: newLoaderId,
+                        storeId: data.storeId || '',
+                        id: uuidv4(),
+                        chunkNo: index + 1,
+                        pageContent: chunk.pageContent,
+                        metadata: JSON.stringify(chunk.metadata),
+                        userId: userId, // 👈 add this
+                        user: undefined // 👈 optional
+                    }
+
+                    const dChunk = appDataSource.getRepository(DocumentStoreFileChunk).create(docChunk)
+                    await appDataSource.getRepository(DocumentStoreFileChunk).save(dChunk)
+                })
+            )
             // update the loader with the new metrics
             loader.totalChunks = response.totalChunks
             loader.totalChars = totalChars

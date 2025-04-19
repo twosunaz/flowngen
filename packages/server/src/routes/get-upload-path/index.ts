@@ -1,6 +1,6 @@
-import express from 'express'
 import getUploadPathController from '../../controllers/get-upload-path'
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // READ
 router.get('/', getUploadPathController.getPathForUploads)

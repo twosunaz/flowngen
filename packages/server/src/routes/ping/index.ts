@@ -1,6 +1,6 @@
-import express from 'express'
 import pingController from '../../controllers/ping'
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // GET
 router.get('/', pingController.getPing)

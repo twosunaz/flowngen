@@ -1,8 +1,7 @@
 // routes/auth/index.ts
-import express from 'express'
 import { login } from '../../controllers/auth'
-
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // Add this test route
 router.get('/', (req, res) => {

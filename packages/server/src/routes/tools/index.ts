@@ -1,7 +1,6 @@
-import express from 'express'
 import toolsController from '../../controllers/tools'
-
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // CREATE
 router.post('/', toolsController.createTool)

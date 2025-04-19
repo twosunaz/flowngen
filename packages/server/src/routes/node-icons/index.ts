@@ -1,6 +1,6 @@
-import express from 'express'
 import nodesController from '../../controllers/nodes'
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // CREATE
 

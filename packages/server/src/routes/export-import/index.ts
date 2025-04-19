@@ -1,6 +1,6 @@
-import express from 'express'
 import exportImportController from '../../controllers/export-import'
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 router.post('/export', exportImportController.exportData)
 

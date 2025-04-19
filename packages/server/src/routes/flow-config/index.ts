@@ -1,6 +1,6 @@
-import express from 'express'
 import flowConfigsController from '../../controllers/flow-configs'
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // CREATE
 

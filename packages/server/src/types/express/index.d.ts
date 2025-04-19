@@ -1,12 +1,16 @@
-// src/types/express/index.d.ts
+// types/express/index.d.ts
 import 'express'
 
-declare module 'express-serve-static-core' {
-    interface Request {
-        user?: {
+declare global {
+    namespace Express {
+        interface User {
             id: string
             username: string
-            // Add any other fields from your JWT payload if needed
+            userId: string
+        }
+
+        interface Request {
+            user?: User
         }
     }
 }

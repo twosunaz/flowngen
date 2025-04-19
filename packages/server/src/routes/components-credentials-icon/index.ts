@@ -1,6 +1,6 @@
-import express from 'express'
 import componentsCredentialsController from '../../controllers/components-credentials'
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // CREATE
 

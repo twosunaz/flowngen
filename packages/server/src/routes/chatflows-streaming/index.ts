@@ -1,7 +1,6 @@
-import express from 'express'
 import chatflowsController from '../../controllers/chatflows'
-
-const router = express.Router()
+import { Router } from 'express'
+const router: Router = require('express').Router()
 
 // READ
 router.get(['/', '/:id'], chatflowsController.checkIfChatflowIsValidForStreaming)
