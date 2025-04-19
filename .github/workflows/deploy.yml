@@ -41,6 +41,14 @@ jobs:
                   DATABASE_SSL=${{ secrets.DATABASE_SSL }}
                   DATABASE_SSL_KEY_BASE64=${{ secrets.DATABASE_SSL_KEY_BASE64 }}
 
+                  # Email system
+                  SMTP_HOST= ${{ secrets.SMTP_HOST }}
+                  SMTP_PORT= ${{ secrets.SMTP_PORT }}
+                  SMTP_USER= ${{ secrets.SMTP_USER }}
+                  SMTP_PASS= ${{ secrets.SMTP_PASS }}
+                  EMAIL_FROM= ${{ secrets.EMAIL_FROM }}
+                  VERIFICATION_URL= ${{ secrets.VERIFICATION_URL }}
+
                   # File system
                   BLOB_STORAGE_PATH=/root/.flowise/storage
                   APIKEY_PATH=/root/.flowise

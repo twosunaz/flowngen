@@ -12,5 +12,6 @@ router.get('/', (req, res) => {
 router.post('/login', authController.login)
 router.post('/register', authController.register)
 router.post('/reset-password', authController.resetPassword)
+router.get('/auth/verify-email', authController.verifyEmail)
 
 export default router

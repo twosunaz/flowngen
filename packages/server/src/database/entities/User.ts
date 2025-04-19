@@ -19,6 +19,12 @@ export class User {
     @Column({ type: 'boolean', default: true })
     isActive: boolean
 
+    @Column({ type: 'boolean', default: true })
+    isVerified: boolean
+
+    @Column({ nullable: true })
+    verificationToken: string | null
+
     @CreateDateColumn()
     created_At: Date
 
