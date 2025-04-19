@@ -5,13 +5,14 @@ import { StatusCodes } from 'http-status-codes'
 
 const getSingleFlowConfig = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (typeof req.params === 'undefined' || !req.params.id) {
+        if (!req.params?.id || !req.user?.id) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
-                `Error: flowConfigsController.getSingleFlowConfig - id not provided!`
+                'Error: flowConfigsController.getSingleFlowConfig - chatflow ID or user ID not provided!'
             )
         }
-        const apiResponse = await flowConfigsService.getSingleFlowConfig(req.params.id)
+
+        const apiResponse = await flowConfigsService.getSingleFlowConfig(req.params.id, req.user.id)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

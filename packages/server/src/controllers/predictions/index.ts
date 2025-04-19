@@ -12,6 +12,7 @@ import { MODE } from '../../Interface'
 
 // Send input message and get prediction result (External)
 const createPrediction = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user?.id
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(
@@ -54,7 +55,7 @@ const createPrediction = async (req: Request, res: Response, next: NextFunction)
             }
         }
         if (isDomainAllowed) {
-            const streamable = await chatflowsService.checkIfChatflowIsValidForStreaming(req.params.id)
+            const streamable = await chatflowsService.checkIfChatflowIsValidForStreaming(req.params.id, userId)
             const isStreamingRequested = req.body.streaming === 'true' || req.body.streaming === true
             if (streamable?.isStreaming && isStreamingRequested) {
                 const sseStreamer = getRunningExpressApp().sseStreamer

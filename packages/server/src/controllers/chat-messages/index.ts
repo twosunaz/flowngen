@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from 'express'
 import { ChatMessageRatingType, ChatType, IReactFlowObject } from '../../Interface'
 import chatflowsService from '../../services/chatflows'
 import chatMessagesService from '../../services/chat-messages'
-import { aMonthAgo, clearSessionMemory } from '../../utils'
+import { clearSessionMemory } from '../../utils'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
-import { Between, DeleteResult, FindOptionsWhere, In } from 'typeorm'
+import { Between, FindOptionsWhere, In } from 'typeorm'
 import { ChatMessage } from '../../database/entities/ChatMessage'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { StatusCodes } from 'http-status-codes'
@@ -136,36 +136,38 @@ const getAllInternalChatMessages = async (req: Request, res: Response, next: Nex
 const removeAllChatMessages = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const appServer = getRunningExpressApp()
-        if (typeof req.params === 'undefined' || !req.params.id) {
+        const userId = req.user?.id
+        if (!req.params?.id || !userId) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
-                'Error: chatMessagesController.removeAllChatMessages - id not provided!'
+                'Error: chatMessagesController.removeAllChatMessages - id or userId not provided!'
             )
         }
+
         const chatflowid = req.params.id
-        const chatflow = await chatflowsService.getChatflowById(req.params.id)
+        const chatflow = await chatflowsService.getChatflowById(req.params.id, userId)
         if (!chatflow) {
             return res.status(404).send(`Chatflow ${req.params.id} not found`)
         }
+
         const flowData = chatflow.flowData
         const parsedFlowData: IReactFlowObject = JSON.parse(flowData)
         const nodes = parsedFlowData.nodes
+
         const chatId = req.query?.chatId as string
         const memoryType = req.query?.memoryType as string | undefined
         const sessionId = req.query?.sessionId as string | undefined
         const _chatTypes = req.query?.chatType as string | undefined
+
         let chatTypes: ChatType[] | undefined
         if (_chatTypes) {
             try {
-                if (Array.isArray(_chatTypes)) {
-                    chatTypes = _chatTypes
-                } else {
-                    chatTypes = JSON.parse(_chatTypes)
-                }
+                chatTypes = Array.isArray(_chatTypes) ? _chatTypes : JSON.parse(_chatTypes)
             } catch (e) {
                 chatTypes = [_chatTypes as ChatType]
             }
         }
+
         const startDate = req.query?.startDate as string | undefined
         const endDate = req.query?.endDate as string | undefined
         const isClearFromViewMessageDialog = req.query?.isClearFromViewMessageDialog as string | undefined
@@ -189,27 +191,19 @@ const removeAllChatMessages = async (req: Request, res: Response, next: NextFunc
             const messageIds = messages.map((message) => message.id)
 
             if (messages.length === 0) {
-                const result: DeleteResult = { raw: [], affected: 0 }
-                return res.json(result)
+                return res.json({ raw: [], affected: 0 })
             }
 
-            // Categorize by chatId_memoryType_sessionId
             const chatIdMap = new Map<string, ChatMessage[]>()
             messages.forEach((message) => {
-                const chatId = message.chatId
-                const memoryType = message.memoryType
-                const sessionId = message.sessionId
-                const composite_key = `${chatId}_${memoryType}_${sessionId}`
-                if (!chatIdMap.has(composite_key)) {
-                    chatIdMap.set(composite_key, [])
-                }
-                chatIdMap.get(composite_key)?.push(message)
+                const key = `${message.chatId}_${message.memoryType}_${message.sessionId}`
+                if (!chatIdMap.has(key)) chatIdMap.set(key, [])
+                chatIdMap.get(key)?.push(message)
             })
 
-            // If hardDelete is ON, we clearSessionMemory from third party integrations
             if (hardDelete) {
-                for (const [composite_key] of chatIdMap) {
-                    const [chatId, memoryType, sessionId] = composite_key.split('_')
+                for (const [key] of chatIdMap) {
+                    const [chatId, memoryType, sessionId] = key.split('_')
                     try {
                         await clearSessionMemory(
                             nodes,
@@ -247,14 +241,11 @@ const removeAllChatMessages = async (req: Request, res: Response, next: NextFunc
             if (chatId) deleteOptions.chatId = chatId
             if (memoryType) deleteOptions.memoryType = memoryType
             if (sessionId) deleteOptions.sessionId = sessionId
-            if (chatTypes && chatTypes.length > 0) {
-                deleteOptions.chatType = In(chatTypes)
-            }
+            if (chatTypes?.length) deleteOptions.chatType = In(chatTypes)
             if (startDate && endDate) {
-                const fromDate = new Date(startDate)
-                const toDate = new Date(endDate)
-                deleteOptions.createdDate = Between(fromDate ?? aMonthAgo(), toDate ?? new Date())
+                deleteOptions.createdDate = Between(new Date(startDate), new Date(endDate))
             }
+
             const apiResponse = await chatMessagesService.removeAllChatMessages(chatId, chatflowid, deleteOptions)
             return res.json(apiResponse)
         }

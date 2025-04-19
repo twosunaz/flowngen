@@ -39,13 +39,14 @@ const getAllCustomTemplates = async (req: Request, res: Response, next: NextFunc
 
 const saveCustomTemplate = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if ((!req.body && !(req.body.chatflowId || req.body.tool)) || !req.body.name) {
+        if ((!req.body && !(req.body.chatflowId || req.body.tool)) || !req.body.name || !req.user?.id) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
-                `Error: marketplacesService.saveCustomTemplate - body not provided!`
+                `Error: marketplacesService.saveCustomTemplate - body or user ID not provided!`
             )
         }
-        const apiResponse = await marketplacesService.saveCustomTemplate(req.body)
+
+        const apiResponse = await marketplacesService.saveCustomTemplate(req.body, req.user.id)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
