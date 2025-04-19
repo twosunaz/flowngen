@@ -1,5 +1,5 @@
 // routes/auth/index.ts
-import { login } from '../../controllers/auth'
+import authController from '../../controllers/auth'
 import { Router } from 'express'
 const router: Router = require('express').Router()
 
@@ -9,6 +9,8 @@ router.get('/', (req, res) => {
     res.status(200).json({ message: 'Auth router is working!' })
 })
 
-router.post('/login', login)
+router.post('/login', authController.login)
+router.post('/register', authController.register)
+router.post('/reset-password', authController.resetPassword)
 
 export default router

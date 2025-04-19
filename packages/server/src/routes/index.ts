@@ -43,6 +43,8 @@ import verifyRouter from './verify'
 import versionRouter from './versions'
 import authRouter from './auth'
 import { verifyToken } from '../middlewares/verifyToken'
+import register from './auth'
+import resetpassword from './auth'
 
 import { Router } from 'express'
 const router: Router = require('express').Router()
@@ -96,5 +98,7 @@ router.use('/vector', verifyToken, vectorRouter)
 router.use('/verify', verifyRouter)
 router.use('/version', versionRouter)
 router.use('/upsert-history', verifyToken, upsertHistoryRouter)
+router.use('/auth/register', register)
+router.use('/auth/forgot-password', resetpassword)
 
 export default router

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Request, Response, NextFunction } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
@@ -67,4 +67,63 @@ export const login = async (req: Request, res: Response) => {
             message: 'Internal server error'
         })
     }
+}
+const register = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { username, password } = req.body
+        if (!username || !password) {
+            return res.status(400).json({ message: 'Username and password required' })
+        }
+
+        const appServer = getRunningExpressApp()
+        const userRepo = appServer.AppDataSource.getRepository(User)
+
+        // ✅ Check if user already exists
+        const existing = await userRepo.findOneBy({ username })
+        if (existing) {
+            return res.status(409).json({ message: 'Username already taken' })
+        }
+
+        // Hash password and save new user
+        const hashedPassword = await bcrypt.hash(password, 10)
+        const newUser = new User()
+        newUser.username = username
+        newUser.password = hashedPassword
+        newUser.isActive = true
+
+        await userRepo.save(newUser)
+
+        res.status(201).json({ message: 'User registered successfully' })
+    } catch (error) {
+        next(error)
+    }
+}
+
+const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { username, newPassword } = req.body
+        if (!username || !newPassword) {
+            return res.status(400).json({ message: 'Username and new password required' })
+        }
+
+        const appServer = getRunningExpressApp()
+        const userRepo = appServer.AppDataSource.getRepository(User)
+        const user = await userRepo.findOneBy({ username })
+
+        if (!user) return res.status(404).json({ message: 'User not found' })
+
+        user.password = await bcrypt.hash(newPassword, 10)
+        await userRepo.save(user)
+
+        res.status(200).json({ message: 'Password reset successfully' })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export default {
+    login,
+    register,
+    resetPassword
+    // existing login function, etc...
 }
