@@ -882,7 +882,11 @@ const _saveChunksToStorage = async (
                     id: uuidv4(),
                     chunkNo: index + 1,
                     pageContent: chunk.pageContent,
-                    metadata: JSON.stringify(chunk.metadata)
+                    metadata: JSON.stringify(chunk.metadata),
+
+                    // Temporary placeholders
+                    userId: '', // You can later replace this with actual user ID
+                    user: undefined as any // Or cast to `User` type if needed
                 }
                 const dChunk = appDataSource.getRepository(DocumentStoreFileChunk).create(docChunk)
                 await appDataSource.getRepository(DocumentStoreFileChunk).save(dChunk)
