@@ -83,10 +83,12 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }
 
     const signOutClicked = () => {
-        localStorage.removeItem('username')
-        localStorage.removeItem('password')
+        localStorage.removeItem('token') // 🔐 Clear token
+        localStorage.removeItem('user') // Optional: clear user info
+        localStorage.removeItem('username') // If used elsewhere
+        localStorage.removeItem('password') // If stored at all (ideally shouldn't be)
         navigate('/', { replace: true })
-        navigate(0)
+        navigate(0) // Forces a full page reload
     }
 
     return (
