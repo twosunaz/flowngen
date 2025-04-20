@@ -22,7 +22,7 @@ export class User {
     @Column({ type: 'boolean', default: true })
     isVerified: boolean
 
-    @Column({ nullable: true })
+    @Column({ type: 'varchar', nullable: true })
     verificationToken: string | null
 
     @CreateDateColumn()
