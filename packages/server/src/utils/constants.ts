@@ -18,8 +18,11 @@ export const WHITELIST_URLS = [
     '/api/v1/version',
     '/api/v1/attachments',
     '/api/v1/metrics',
-    '/api/v1/auth/login', // ✅ Add this
-    '/api/v1/auth' // ✅ (Optional) For GET testing
+    '/api/v1/auth/login',
+    '/api/v1/auth',
+    '/api/v1/auth/register',
+    '/api/v1/auth/reset-password',
+    'api/v1/auth/verify-email'
 ]
 
 export const OMIT_QUEUE_JOB_DATA = ['componentNodes', 'appDataSource', 'sseStreamer', 'telemetry', 'cachePool']

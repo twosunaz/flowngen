@@ -68,9 +68,14 @@ jobs:
                     echo "🔄 Pulling latest changes..."
                     git pull origin release
 
+                    docker-compose -f docker-compose.prod.yml down
+                    docker system prune -a --volumes --force
+
                     echo "🛠️ Building Docker containers..."
                     ( while true; do echo "🌀 Still deploying at \$(date)..."; sleep 60; done ) & 
                     KEEP_ALIVE_PID=$!
+                    
+                    sleep 2
 
                     docker-compose -f docker-compose.prod.yml up --build -d
 
