@@ -54,11 +54,19 @@ import { INPUT_PARAMS_TYPE, OMIT_QUEUE_JOB_DATA } from '../../utils/constants'
 
 const DOCUMENT_STORE_BASE_FOLDER = 'docustore'
 
-const createDocumentStore = async (newDocumentStore: DocumentStore) => {
+const createDocumentStore = async (newDocumentStore: DocumentStore, userId: string) => {
     try {
         const appServer = getRunningExpressApp()
-        const documentStore = appServer.AppDataSource.getRepository(DocumentStore).create(newDocumentStore)
+
+        // 🧠 Attach userId before saving
+        const documentStoreData = {
+            ...newDocumentStore,
+            userId
+        }
+
+        const documentStore = appServer.AppDataSource.getRepository(DocumentStore).create(documentStoreData)
         const dbResponse = await appServer.AppDataSource.getRepository(DocumentStore).save(documentStore)
+
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
@@ -68,10 +76,14 @@ const createDocumentStore = async (newDocumentStore: DocumentStore) => {
     }
 }
 
-const getAllDocumentStores = async () => {
+const getAllDocumentStores = async (userId: string) => {
     try {
         const appServer = getRunningExpressApp()
-        const entities = await appServer.AppDataSource.getRepository(DocumentStore).find()
+
+        const entities = await appServer.AppDataSource.getRepository(DocumentStore).find({
+            where: { userId } // 🧠 Only fetch documents belonging to the user
+        })
+
         return entities
     } catch (error) {
         throw new InternalFlowiseError(

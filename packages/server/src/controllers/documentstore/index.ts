@@ -17,7 +17,13 @@ const createDocumentStore = async (req: Request, res: Response, next: NextFuncti
         }
         const body = req.body
         const docStore = DocumentStoreDTO.toEntity(body)
-        const apiResponse = await documentStoreService.createDocumentStore(docStore)
+
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+        const apiResponse = await documentStoreService.createDocumentStore(docStore, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -26,7 +32,11 @@ const createDocumentStore = async (req: Request, res: Response, next: NextFuncti
 
 const getAllDocumentStores = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await documentStoreService.getAllDocumentStores()
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+        const apiResponse = await documentStoreService.getAllDocumentStores(userId)
         return res.json(DocumentStoreDTO.fromEntities(apiResponse))
     } catch (error) {
         next(error)
