@@ -10,12 +10,14 @@ import {
 } from 'flowise-components'
 import { getRunningExpressApp } from './getRunningExpressApp'
 import { getErrorMessage } from '../errors/utils'
-
+import { InternalFlowiseError } from '../errors/internalFlowiseError'
+import { StatusCodes } from 'http-status-codes'
+import { ChatFlow } from '../database/entities/ChatFlow'
 /**
  * Create attachment
  * @param {Request} req
  */
-export const createFileAttachment = async (req: Request) => {
+export const createFileAttachment = async (req: Request, userId: string) => {
     const appServer = getRunningExpressApp()
 
     const chatflowid = req.params.chatflowId
@@ -30,6 +32,15 @@ export const createFileAttachment = async (req: Request) => {
         throw new Error(
             'Params chatId is required! Please provide chatflowId and chatId in the URL: /api/v1/attachments/:chatflowId/:chatId'
         )
+    }
+
+    // 🧠 Validate ownership of the chatflow
+    const chatflow = await appServer.AppDataSource.getRepository(ChatFlow).findOneBy({
+        id: chatflowid,
+        userId: userId
+    })
+    if (!chatflow) {
+        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found or unauthorized`)
     }
 
     // Find FileLoader node

@@ -4,9 +4,9 @@ import { createFileAttachment } from '../../utils/createAttachment'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 
-const createAttachment = async (req: Request) => {
+const createAttachment = async (req: Request, userId: string) => {
     try {
-        return await createFileAttachment(req)
+        return await createFileAttachment(req, userId)
     } catch (error) {
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
