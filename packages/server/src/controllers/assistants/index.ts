@@ -12,7 +12,15 @@ const createAssistant = async (req: Request, res: Response, next: NextFunction) 
                 `Error: assistantsController.createAssistant - body not provided!`
             )
         }
-        const apiResponse = await assistantsService.createAssistant(req.body)
+
+        // 🧠 Extract userId
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
+        const apiResponse = await assistantsService.createAssistant(req.body, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -27,7 +35,16 @@ const deleteAssistant = async (req: Request, res: Response, next: NextFunction) 
                 `Error: assistantsController.deleteAssistant - id not provided!`
             )
         }
-        const apiResponse = await assistantsService.deleteAssistant(req.params.id, req.query.isDeleteBoth)
+
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
+        const apiResponse = await assistantsService.deleteAssistant(req.params.id, req.query.isDeleteBoth, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -37,7 +54,16 @@ const deleteAssistant = async (req: Request, res: Response, next: NextFunction) 
 const getAllAssistants = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const type = req.query.type as AssistantType
-        const apiResponse = await assistantsService.getAllAssistants(type)
+
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
+        const apiResponse = await assistantsService.getAllAssistants(type, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -52,7 +78,16 @@ const getAssistantById = async (req: Request, res: Response, next: NextFunction)
                 `Error: assistantsController.getAssistantById - id not provided!`
             )
         }
-        const apiResponse = await assistantsService.getAssistantById(req.params.id)
+
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
+        const apiResponse = await assistantsService.getAssistantById(req.params.id, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -73,7 +108,16 @@ const updateAssistant = async (req: Request, res: Response, next: NextFunction) 
                 `Error: assistantsController.updateAssistant - body not provided!`
             )
         }
-        const apiResponse = await assistantsService.updateAssistant(req.params.id, req.body)
+
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
+        const apiResponse = await assistantsService.updateAssistant(req.params.id, req.body, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -91,7 +135,15 @@ const getChatModels = async (req: Request, res: Response, next: NextFunction) =>
 
 const getDocumentStores = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await assistantsService.getDocumentStores()
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
+        const apiResponse = await assistantsService.getDocumentStores(userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)

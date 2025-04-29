@@ -60,7 +60,7 @@ const exportData = async (exportInput: ExportInput, userId: string): Promise<{ F
         if (exportInput.variable === true) allVars = await variableService.getAllVariables()
 
         let allAssistants: Assistant[] = []
-        if (exportInput.assistant === true) allAssistants = await assistantService.getAllAssistants()
+        if (exportInput.assistant === true) allAssistants = await assistantService.getAllAssistants(undefined, userId)
 
         return {
             FileDefaultName,

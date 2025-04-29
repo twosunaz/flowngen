@@ -17,7 +17,7 @@ import logger from '../../utils/logger'
 import { ASSISTANT_PROMPT_GENERATOR } from '../../utils/prompt'
 import { INPUT_PARAMS_TYPE } from '../../utils/constants'
 
-const createAssistant = async (requestBody: any): Promise<Assistant> => {
+const createAssistant = async (requestBody: any, userId: string): Promise<Assistant> => {
     try {
         const appServer = getRunningExpressApp()
         if (!requestBody.details) {
@@ -28,6 +28,7 @@ const createAssistant = async (requestBody: any): Promise<Assistant> => {
         if (requestBody.type === 'CUSTOM') {
             const newAssistant = new Assistant()
             Object.assign(newAssistant, requestBody)
+            newAssistant.userId = userId // 🧠 Assign userId to custom assistant
 
             const assistant = appServer.AppDataSource.getRepository(Assistant).create(newAssistant)
             const dbResponse = await appServer.AppDataSource.getRepository(Assistant).save(assistant)
@@ -51,7 +52,7 @@ const createAssistant = async (requestBody: any): Promise<Assistant> => {
                 throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${requestBody.credential} not found`)
             }
 
-            // Decrpyt credentialData
+            // Decrypt credentialData
             const decryptedCredentialData = await decryptCredentialData(credential.encryptedData)
             const openAIApiKey = decryptedCredentialData['openAIApiKey']
             if (!openAIApiKey) {
@@ -63,16 +64,13 @@ const createAssistant = async (requestBody: any): Promise<Assistant> => {
             let tools = []
             if (assistantDetails.tools) {
                 for (const tool of assistantDetails.tools ?? []) {
-                    tools.push({
-                        type: tool
-                    })
+                    tools.push({ type: tool })
                 }
             }
 
-            // Save tool_resources to be stored later into database
             const savedToolResources = cloneDeep(assistantDetails.tool_resources)
 
-            // Cleanup tool_resources for creating assistant
+            // Cleanup tool_resources for API
             if (assistantDetails.tool_resources) {
                 for (const toolResource in assistantDetails.tool_resources) {
                     if (toolResource === 'file_search') {
@@ -87,7 +85,7 @@ const createAssistant = async (requestBody: any): Promise<Assistant> => {
                 }
             }
 
-            // If the assistant doesn't exist, create a new one
+            // Create or update Assistant in OpenAI
             if (!assistantDetails.id) {
                 const newAssistant = await openai.beta.assistants.create({
                     name: assistantDetails.name,
@@ -103,7 +101,6 @@ const createAssistant = async (requestBody: any): Promise<Assistant> => {
             } else {
                 const retrievedAssistant = await openai.beta.assistants.retrieve(assistantDetails.id)
                 let filteredTools = uniqWith([...retrievedAssistant.tools.filter((tool) => tool.type === 'function'), ...tools], isEqual)
-                // Remove empty functions
                 filteredTools = filteredTools.filter((tool) => !(tool.type === 'function' && !(tool as any).function))
 
                 await openai.beta.assistants.update(assistantDetails.id, {
@@ -127,8 +124,10 @@ const createAssistant = async (requestBody: any): Promise<Assistant> => {
         } catch (error) {
             throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error creating new assistant - ${getErrorMessage(error)}`)
         }
+
         const newAssistant = new Assistant()
         Object.assign(newAssistant, requestBody)
+        newAssistant.userId = userId // 🧠 Assign userId for standard OpenAI assistant as well
 
         const assistant = appServer.AppDataSource.getRepository(Assistant).create(newAssistant)
         const dbResponse = await appServer.AppDataSource.getRepository(Assistant).save(assistant)
@@ -137,7 +136,9 @@ const createAssistant = async (requestBody: any): Promise<Assistant> => {
             version: await getAppVersion(),
             assistantId: dbResponse.id
         })
-        appServer.metricsProvider?.incrementCounter(FLOWISE_METRIC_COUNTERS.ASSISTANT_CREATED, { status: FLOWISE_COUNTER_STATUS.SUCCESS })
+        appServer.metricsProvider?.incrementCounter(FLOWISE_METRIC_COUNTERS.ASSISTANT_CREATED, {
+            status: FLOWISE_COUNTER_STATUS.SUCCESS
+        })
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
@@ -147,19 +148,28 @@ const createAssistant = async (requestBody: any): Promise<Assistant> => {
     }
 }
 
-const deleteAssistant = async (assistantId: string, isDeleteBoth: any): Promise<DeleteResult> => {
+const deleteAssistant = async (assistantId: string, isDeleteBoth: any, userId: string): Promise<DeleteResult> => {
     try {
         const appServer = getRunningExpressApp()
+
+        // 🧠 Find Assistant by id + userId
         const assistant = await appServer.AppDataSource.getRepository(Assistant).findOneBy({
-            id: assistantId
+            id: assistantId,
+            userId: userId
         })
+
         if (!assistant) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Assistant ${assistantId} not found`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Assistant ${assistantId} not found or unauthorized`)
         }
+
         if (assistant.type === 'CUSTOM') {
-            const dbResponse = await appServer.AppDataSource.getRepository(Assistant).delete({ id: assistantId })
+            const dbResponse = await appServer.AppDataSource.getRepository(Assistant).delete({
+                id: assistantId,
+                userId: userId // 🧠 Enforce deletion only if owned
+            })
             return dbResponse
         }
+
         try {
             const assistantDetails = JSON.parse(assistant.details)
             const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({
@@ -170,7 +180,7 @@ const deleteAssistant = async (assistantId: string, isDeleteBoth: any): Promise<
                 throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${assistant.credential} not found`)
             }
 
-            // Decrpyt credentialData
+            // Decrypt credentialData
             const decryptedCredentialData = await decryptCredentialData(credential.encryptedData)
             const openAIApiKey = decryptedCredentialData['openAIApiKey']
             if (!openAIApiKey) {
@@ -178,8 +188,16 @@ const deleteAssistant = async (assistantId: string, isDeleteBoth: any): Promise<
             }
 
             const openai = new OpenAI({ apiKey: openAIApiKey })
-            const dbResponse = await appServer.AppDataSource.getRepository(Assistant).delete({ id: assistantId })
-            if (isDeleteBoth) await openai.beta.assistants.del(assistantDetails.id)
+
+            const dbResponse = await appServer.AppDataSource.getRepository(Assistant).delete({
+                id: assistantId,
+                userId: userId // 🧠 Enforce ownership again
+            })
+
+            if (isDeleteBoth) {
+                await openai.beta.assistants.del(assistantDetails.id)
+            }
+
             return dbResponse
         } catch (error: any) {
             throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error deleting assistant - ${getErrorMessage(error)}`)
@@ -192,16 +210,22 @@ const deleteAssistant = async (assistantId: string, isDeleteBoth: any): Promise<
     }
 }
 
-const getAllAssistants = async (type?: AssistantType): Promise<Assistant[]> => {
+const getAllAssistants = async (type: AssistantType | undefined, userId: string): Promise<Assistant[]> => {
     try {
         const appServer = getRunningExpressApp()
+
         if (type) {
             const dbResponse = await appServer.AppDataSource.getRepository(Assistant).findBy({
-                type
+                type,
+                userId: userId // 🧠 Filter by both type and userId
             })
             return dbResponse
         }
-        const dbResponse = await appServer.AppDataSource.getRepository(Assistant).find()
+
+        const dbResponse = await appServer.AppDataSource.getRepository(Assistant).findBy({
+            userId: userId // 🧠 Always filter by userId
+        })
+
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
@@ -211,15 +235,20 @@ const getAllAssistants = async (type?: AssistantType): Promise<Assistant[]> => {
     }
 }
 
-const getAssistantById = async (assistantId: string): Promise<Assistant> => {
+const getAssistantById = async (assistantId: string, userId: string): Promise<Assistant> => {
     try {
         const appServer = getRunningExpressApp()
+
+        // 🧠 Find Assistant by id + userId
         const dbResponse = await appServer.AppDataSource.getRepository(Assistant).findOneBy({
-            id: assistantId
+            id: assistantId,
+            userId: userId
         })
+
         if (!dbResponse) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Assistant ${assistantId} not found`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Assistant ${assistantId} not found or unauthorized`)
         }
+
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
@@ -229,15 +258,18 @@ const getAssistantById = async (assistantId: string): Promise<Assistant> => {
     }
 }
 
-const updateAssistant = async (assistantId: string, requestBody: any): Promise<Assistant> => {
+const updateAssistant = async (assistantId: string, requestBody: any, userId: string): Promise<Assistant> => {
     try {
         const appServer = getRunningExpressApp()
+
+        // 🧠 Find Assistant by id + userId
         const assistant = await appServer.AppDataSource.getRepository(Assistant).findOneBy({
-            id: assistantId
+            id: assistantId,
+            userId: userId
         })
 
         if (!assistant) {
-            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Assistant ${assistantId} not found`)
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Assistant ${assistantId} not found or unauthorized`)
         }
 
         if (assistant.type === 'CUSTOM') {
@@ -262,7 +294,6 @@ const updateAssistant = async (assistantId: string, requestBody: any): Promise<A
                 throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${body.credential} not found`)
             }
 
-            // Decrpyt credentialData
             const decryptedCredentialData = await decryptCredentialData(credential.encryptedData)
             const openAIApiKey = decryptedCredentialData['openAIApiKey']
             if (!openAIApiKey) {
@@ -274,16 +305,12 @@ const updateAssistant = async (assistantId: string, requestBody: any): Promise<A
             let tools = []
             if (assistantDetails.tools) {
                 for (const tool of assistantDetails.tools ?? []) {
-                    tools.push({
-                        type: tool
-                    })
+                    tools.push({ type: tool })
                 }
             }
 
-            // Save tool_resources to be stored later into database
             const savedToolResources = cloneDeep(assistantDetails.tool_resources)
 
-            // Cleanup tool_resources before updating
             if (assistantDetails.tool_resources) {
                 for (const toolResource in assistantDetails.tool_resources) {
                     if (toolResource === 'file_search') {
@@ -399,10 +426,15 @@ const getChatModels = async (): Promise<any> => {
     }
 }
 
-const getDocumentStores = async (): Promise<any> => {
+const getDocumentStores = async (userId: string): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
-        const stores = await appServer.AppDataSource.getRepository(DocumentStore).find()
+
+        // 🧠 Filter by userId
+        const stores = await appServer.AppDataSource.getRepository(DocumentStore).findBy({
+            userId: userId
+        })
+
         const returnData = []
         for (const store of stores) {
             if (store.status === 'UPSERTED') {
