@@ -54,31 +54,31 @@ export class UpsertQueue extends BaseQueue {
         if (this.cachePool) data.cachePool = this.cachePool
         if (this.componentNodes) data.componentNodes = this.componentNodes
 
-        // document-store/loader/preview
         if (Object.prototype.hasOwnProperty.call(data, 'isPreviewOnly')) {
             logger.info('Previewing loader...')
             return await previewChunks(data as IExecutePreviewLoader)
         }
 
-        // document-store/loader/process/:loaderId
         if (Object.prototype.hasOwnProperty.call(data, 'isProcessWithoutUpsert')) {
             logger.info('Processing loader...')
-            return await processLoader(data as IExecuteProcessLoader)
+            return await processLoader(data as IExecuteProcessLoader & { userId: string })
         }
 
-        // document-store/vectorstore/insert/:loaderId
         if (Object.prototype.hasOwnProperty.call(data, 'isVectorStoreInsert')) {
             logger.info('Inserting vector store...')
             return await insertIntoVectorStore(data as IExecuteVectorStoreInsert)
         }
 
-        // document-store/upsert/:storeId
         if (Object.prototype.hasOwnProperty.call(data, 'storeId')) {
             logger.info('Upserting to vector store via document loader...')
-            return await executeDocStoreUpsert(data as IExecuteDocStoreUpsert)
+
+            if (!(data as any).userId) {
+                throw new Error('Missing userId for executeDocStoreUpsert')
+            }
+
+            return await executeDocStoreUpsert(data as IExecuteDocStoreUpsert & { userId: string })
         }
 
-        // upsert-vector/:chatflowid
         logger.info('Upserting to vector store via chatflow...')
         return await executeUpsert(data as IExecuteFlowParams)
     }

@@ -101,14 +101,25 @@ const getDocumentStoreFileChunks = async (req: Request, res: Response, next: Nex
                 `Error: documentStoreController.getDocumentStoreFileChunks - fileId not provided!`
             )
         }
+
+        // 🧠 Extract userId safely
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
         const appDataSource = getRunningExpressApp().AppDataSource
         const page = req.params.pageNo ? parseInt(req.params.pageNo) : 1
+
+        // 🧠 Pass userId to service function
         const apiResponse = await documentStoreService.getDocumentStoreFileChunks(
             appDataSource,
             req.params.storeId,
             req.params.fileId,
-            page
+            page,
+            userId
         )
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -135,11 +146,20 @@ const deleteDocumentStoreFileChunk = async (req: Request, res: Response, next: N
                 `Error: documentStoreController.deleteDocumentStoreFileChunk - chunkId not provided!`
             )
         }
+
+        // 🧠 Safely extract userId
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
         const apiResponse = await documentStoreService.deleteDocumentStoreFileChunk(
             req.params.storeId,
             req.params.loaderId,
-            req.params.chunkId
+            req.params.chunkId,
+            userId // 🧠 Pass userId into service
         )
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -166,6 +186,7 @@ const editDocumentStoreFileChunk = async (req: Request, res: Response, next: Nex
                 `Error: documentStoreController.editDocumentStoreFileChunk - chunkId not provided!`
             )
         }
+
         const body = req.body
         if (typeof body === 'undefined') {
             throw new InternalFlowiseError(
@@ -173,13 +194,22 @@ const editDocumentStoreFileChunk = async (req: Request, res: Response, next: Nex
                 `Error: documentStoreController.editDocumentStoreFileChunk - body not provided!`
             )
         }
+
+        // 🧠 Extract userId
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
         const apiResponse = await documentStoreService.editDocumentStoreFileChunk(
             req.params.storeId,
             req.params.loaderId,
             req.params.chunkId,
             body.pageContent,
-            body.metadata
+            body.metadata,
+            userId // 🧠 Pass userId
         )
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -217,9 +247,18 @@ const processLoader = async (req: Request, res: Response, next: NextFunction) =>
                 `Error: documentStoreController.processLoader - body not provided!`
             )
         }
+
         const docLoaderId = req.params.loaderId
         const body = req.body
-        const apiResponse = await documentStoreService.processLoaderMiddleware(body, docLoaderId)
+
+        // 🧠 Extract userId
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
+        const apiResponse = await documentStoreService.processLoaderMiddleware(body, docLoaderId, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -420,15 +459,31 @@ const upsertDocStoreMiddleware = async (req: Request, res: Response, next: NextF
                 `Error: documentStoreController.upsertDocStoreMiddleware - storeId not provided!`
             )
         }
+
         if (typeof req.body === 'undefined') {
             throw new Error('Error: documentStoreController.upsertDocStoreMiddleware - body not provided!')
         }
+
         const body = req.body
         const files = (req.files as Express.Multer.File[]) || []
-        const apiResponse = await documentStoreService.upsertDocStoreMiddleware(req.params.id, body, files)
+
+        // 🧠 Extract userId
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
+        const apiResponse = await documentStoreService.upsertDocStoreMiddleware(
+            req.params.id,
+            body,
+            files,
+            userId // 🧠 Pass userId now
+        )
+
         getRunningExpressApp().metricsProvider?.incrementCounter(FLOWISE_METRIC_COUNTERS.VECTORSTORE_UPSERT, {
             status: FLOWISE_COUNTER_STATUS.SUCCESS
         })
+
         return res.json(apiResponse)
     } catch (error) {
         getRunningExpressApp().metricsProvider?.incrementCounter(FLOWISE_METRIC_COUNTERS.VECTORSTORE_UPSERT, {
