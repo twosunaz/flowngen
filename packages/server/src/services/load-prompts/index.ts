@@ -4,7 +4,7 @@ import { parsePrompt } from '../../utils/hub'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 
-const createPrompt = async (promptName: string): Promise<any> => {
+const createPrompt = async (promptName: string, userId?: string): Promise<any> => {
     try {
         let hub = new Client()
         const prompt = await hub.pull(promptName)

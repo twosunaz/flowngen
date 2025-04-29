@@ -11,7 +11,12 @@ const createPrompt = async (req: Request, res: Response, next: NextFunction) => 
                 `Error: loadPromptsController.createPrompt - promptName not provided!`
             )
         }
-        const apiResponse = await loadPromptsService.createPrompt(req.body.promptName as string)
+
+        if (!req.user?.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `Error: loadPromptsController.createPrompt - user not authenticated!`)
+        }
+
+        const apiResponse = await loadPromptsService.createPrompt(req.body.promptName as string, req.user.id)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
