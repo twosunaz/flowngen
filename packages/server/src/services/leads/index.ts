@@ -6,12 +6,13 @@ import { ILead } from '../../Interface'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 
-const getAllLeads = async (chatflowid: string) => {
+const getAllLeads = async (chatflowid: string, userId: string) => {
     try {
         const appServer = getRunningExpressApp()
         const dbResponse = await appServer.AppDataSource.getRepository(Lead).find({
             where: {
-                chatflowid
+                chatflowid,
+                userId // 🧠 scope to ONLY leads belonging to the logged-in user
             }
         })
         return dbResponse
@@ -20,13 +21,14 @@ const getAllLeads = async (chatflowid: string) => {
     }
 }
 
-const createLead = async (body: Partial<ILead>) => {
+const createLead = async (body: Partial<ILead>, userId: string) => {
     try {
         const chatId = body.chatId ?? uuidv4()
 
         const newLead = new Lead()
         Object.assign(newLead, body)
         Object.assign(newLead, { chatId })
+        newLead.userId = userId // 🧠 Attach userId to the new lead
 
         const appServer = getRunningExpressApp()
         const lead = appServer.AppDataSource.getRepository(Lead).create(newLead)

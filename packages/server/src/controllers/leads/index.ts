@@ -11,8 +11,13 @@ const getAllLeadsForChatflow = async (req: Request, res: Response, next: NextFun
                 `Error: leadsController.getAllLeadsForChatflow - id not provided!`
             )
         }
+        const userId = req.user?.id
+        if (!userId) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User ID not found in request')
+        }
+
         const chatflowid = req.params.id
-        const apiResponse = await leadsService.getAllLeads(chatflowid)
+        const apiResponse = await leadsService.getAllLeads(chatflowid, userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -27,7 +32,16 @@ const createLeadInChatflow = async (req: Request, res: Response, next: NextFunct
                 `Error: leadsController.createLeadInChatflow - body not provided!`
             )
         }
-        const apiResponse = await leadsService.createLead(req.body)
+
+        if (!req.user?.id) {
+            throw new InternalFlowiseError(
+                StatusCodes.UNAUTHORIZED,
+                `Error: leadsController.createLeadInChatflow - user not authenticated!`
+            )
+        }
+
+        const userId = req.user.id
+        const apiResponse = await leadsService.createLead(req.body, userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
