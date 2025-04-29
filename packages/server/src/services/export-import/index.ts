@@ -57,7 +57,7 @@ const exportData = async (exportInput: ExportInput, userId: string): Promise<{ F
         if (exportInput.agentflow === true) allMultiAgent = await chatflowService.getAllChatflows('MULTIAGENT', userId)
 
         let allVars: Variable[] = []
-        if (exportInput.variable === true) allVars = await variableService.getAllVariables()
+        if (exportInput.variable === true) allVars = await variableService.getAllVariables(userId)
 
         let allAssistants: Assistant[] = []
         if (exportInput.assistant === true) allAssistants = await assistantService.getAllAssistants(undefined, userId)
@@ -89,7 +89,7 @@ const importData = async (importData: ExportData, userId: string) => {
             if (importData.Tool.length > 0) await toolsService.importTools(importData.Tool, queryRunner)
             if (importData.ChatFlow.length > 0) await chatflowService.importChatflows(importData.ChatFlow, userId, queryRunner)
             if (importData.AgentFlow.length > 0) await chatflowService.importChatflows(importData.AgentFlow, userId, queryRunner)
-            if (importData.Variable.length > 0) await variableService.importVariables(importData.Variable, queryRunner)
+            if (importData.Variable.length > 0) await variableService.importVariables(importData.Variable, userId, queryRunner)
             if (importData.Assistant.length > 0) await assistantService.importAssistants(importData.Assistant, queryRunner)
 
             await queryRunner.commitTransaction()

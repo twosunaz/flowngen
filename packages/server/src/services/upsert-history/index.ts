@@ -1,4 +1,4 @@
-import { MoreThanOrEqual, LessThanOrEqual, Between } from 'typeorm'
+import { MoreThanOrEqual, LessThanOrEqual, Between, In } from 'typeorm'
 import { StatusCodes } from 'http-status-codes'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { UpsertHistory } from '../../database/entities/UpsertHistory'
@@ -9,7 +9,8 @@ const getAllUpsertHistory = async (
     sortOrder: string | undefined,
     chatflowid: string | undefined,
     startDate: string | undefined,
-    endDate: string | undefined
+    endDate: string | undefined,
+    userId: string
 ) => {
     try {
         const appServer = getRunningExpressApp()
@@ -27,19 +28,19 @@ const getAllUpsertHistory = async (
         let upsertHistory = await appServer.AppDataSource.getRepository(UpsertHistory).find({
             where: {
                 chatflowid,
+                userId, // 🔥 Only return records belonging to the user
                 date: createdDateQuery
             },
             order: {
                 date: sortOrder === 'DESC' ? 'DESC' : 'ASC'
             }
         })
-        upsertHistory = upsertHistory.map((hist) => {
-            return {
-                ...hist,
-                result: hist.result ? JSON.parse(hist.result) : {},
-                flowData: hist.flowData ? JSON.parse(hist.flowData) : {}
-            }
-        })
+
+        upsertHistory = upsertHistory.map((hist) => ({
+            ...hist,
+            result: hist.result ? JSON.parse(hist.result) : {},
+            flowData: hist.flowData ? JSON.parse(hist.flowData) : {}
+        }))
 
         return upsertHistory
     } catch (error) {
@@ -50,10 +51,14 @@ const getAllUpsertHistory = async (
     }
 }
 
-const patchDeleteUpsertHistory = async (ids: string[] = []): Promise<any> => {
+const patchDeleteUpsertHistory = async (ids: string[] = [], userId: string): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(UpsertHistory).delete(ids)
+
+        const dbResponse = await appServer.AppDataSource.getRepository(UpsertHistory).delete({
+            id: In(ids),
+            userId // 🔥 Only delete entries that belong to this user
+        })
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(

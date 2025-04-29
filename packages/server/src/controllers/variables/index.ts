@@ -6,6 +6,10 @@ import { StatusCodes } from 'http-status-codes'
 
 const createVariable = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const userId = req.user?.id
+        if (!userId) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `User not authenticated`)
+        }
         if (typeof req.body === 'undefined') {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
@@ -15,7 +19,7 @@ const createVariable = async (req: Request, res: Response, next: NextFunction) =
         const body = req.body
         const newVariable = new Variable()
         Object.assign(newVariable, body)
-        const apiResponse = await variablesService.createVariable(newVariable)
+        const apiResponse = await variablesService.createVariable(newVariable, userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -24,10 +28,14 @@ const createVariable = async (req: Request, res: Response, next: NextFunction) =
 
 const deleteVariable = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const userId = req.user?.id
+        if (!userId) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `User not authenticated`)
+        }
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, 'Error: variablesController.deleteVariable - id not provided!')
         }
-        const apiResponse = await variablesService.deleteVariable(req.params.id)
+        const apiResponse = await variablesService.deleteVariable(req.params.id, userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -36,7 +44,11 @@ const deleteVariable = async (req: Request, res: Response, next: NextFunction) =
 
 const getAllVariables = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await variablesService.getAllVariables()
+        const userId = req.user?.id
+        if (!userId) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `User not authenticated`)
+        }
+        const apiResponse = await variablesService.getAllVariables(userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -45,6 +57,10 @@ const getAllVariables = async (req: Request, res: Response, next: NextFunction) 
 
 const updateVariable = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const userId = req.user?.id
+        if (!userId) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `User not authenticated`)
+        }
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, 'Error: variablesController.updateVariable - id not provided!')
         }
@@ -54,7 +70,7 @@ const updateVariable = async (req: Request, res: Response, next: NextFunction) =
                 'Error: variablesController.updateVariable - body not provided!'
             )
         }
-        const variable = await variablesService.getVariableById(req.params.id)
+        const variable = await variablesService.getVariableById(req.params.id, userId)
         if (!variable) {
             return res.status(404).send(`Variable ${req.params.id} not found in the database`)
         }

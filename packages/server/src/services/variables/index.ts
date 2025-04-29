@@ -5,9 +5,12 @@ import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 import { QueryRunner } from 'typeorm'
 
-const createVariable = async (newVariable: Variable) => {
+const createVariable = async (newVariable: Variable, userId: string): Promise<Variable> => {
     try {
         const appServer = getRunningExpressApp()
+        // 🧠 Attach userId before saving
+        newVariable.userId = userId
+
         const variable = await appServer.AppDataSource.getRepository(Variable).create(newVariable)
         const dbResponse = await appServer.AppDataSource.getRepository(Variable).save(variable)
         return dbResponse
@@ -19,10 +22,10 @@ const createVariable = async (newVariable: Variable) => {
     }
 }
 
-const deleteVariable = async (variableId: string): Promise<any> => {
+const deleteVariable = async (variableId: string, userId: string): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(Variable).delete({ id: variableId })
+        const dbResponse = await appServer.AppDataSource.getRepository(Variable).delete({ id: variableId, userId })
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
@@ -32,10 +35,10 @@ const deleteVariable = async (variableId: string): Promise<any> => {
     }
 }
 
-const getAllVariables = async () => {
+const getAllVariables = async (userId: string): Promise<Variable[]> => {
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(Variable).find()
+        const dbResponse = await appServer.AppDataSource.getRepository(Variable).find({ where: { userId } })
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
@@ -45,12 +48,10 @@ const getAllVariables = async () => {
     }
 }
 
-const getVariableById = async (variableId: string) => {
+const getVariableById = async (variableId: string, userId: string): Promise<Variable | null> => {
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(Variable).findOneBy({
-            id: variableId
-        })
+        const dbResponse = await appServer.AppDataSource.getRepository(Variable).findOneBy({ id: variableId, userId })
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
@@ -60,9 +61,13 @@ const getVariableById = async (variableId: string) => {
     }
 }
 
-const updateVariable = async (variable: Variable, updatedVariable: Variable) => {
+const updateVariable = async (variable: Variable, updatedVariable: Variable): Promise<Variable> => {
     try {
         const appServer = getRunningExpressApp()
+
+        // 🧠 Prevent userId from being overwritten
+        delete (updatedVariable as any).userId
+
         const tmpUpdatedVariable = await appServer.AppDataSource.getRepository(Variable).merge(variable, updatedVariable)
         const dbResponse = await appServer.AppDataSource.getRepository(Variable).save(tmpUpdatedVariable)
         return dbResponse
@@ -74,42 +79,41 @@ const updateVariable = async (variable: Variable, updatedVariable: Variable) => 
     }
 }
 
-const importVariables = async (newVariables: Partial<Variable>[], queryRunner?: QueryRunner): Promise<any> => {
+const importVariables = async (newVariables: Partial<Variable>[], userId: string, queryRunner?: QueryRunner): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
         const repository = queryRunner ? queryRunner.manager.getRepository(Variable) : appServer.AppDataSource.getRepository(Variable)
 
-        // step 1 - check whether array is zero
-        if (newVariables.length == 0) return
+        if (newVariables.length === 0) return
 
-        // step 2 - check whether ids are duplicate in database
         let ids = '('
-        let count: number = 0
+        let count = 0
         const lastCount = newVariables.length - 1
         newVariables.forEach((newVariable) => {
             ids += `'${newVariable.id}'`
-            if (lastCount != count) ids += ','
-            if (lastCount == count) ids += ')'
-            count += 1
+            if (count !== lastCount) ids += ','
+            if (count === lastCount) ids += ')'
+            count++
         })
 
-        const selectResponse = await repository.createQueryBuilder('v').select('v.id').where(`v.id IN ${ids}`).getMany()
-        const foundIds = selectResponse.map((response) => {
-            return response.id
-        })
+        const selectResponse = await repository
+            .createQueryBuilder('v')
+            .select('v.id')
+            .where(`v.id IN ${ids}`)
+            .andWhere('v.userId = :userId', { userId })
+            .getMany()
 
-        // step 3 - remove ids that are only duplicate
-        const prepVariables: Partial<Variable>[] = newVariables.map((newVariable) => {
-            let id: string = ''
-            if (newVariable.id) id = newVariable.id
-            if (foundIds.includes(id)) {
+        const foundIds = selectResponse.map((response) => response.id)
+
+        const prepVariables = newVariables.map((newVariable) => {
+            if (newVariable.id && foundIds.includes(newVariable.id)) {
                 newVariable.id = undefined
                 newVariable.name += ' (1)'
             }
+            newVariable.userId = userId
             return newVariable
         })
 
-        // step 4 - transactional insert array of entities
         const insertResponse = await repository.insert(prepVariables)
 
         return insertResponse
