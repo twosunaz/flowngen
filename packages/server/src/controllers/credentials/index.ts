@@ -11,7 +11,15 @@ const createCredential = async (req: Request, res: Response, next: NextFunction)
                 `Error: credentialsController.createCredential - body not provided!`
             )
         }
-        const apiResponse = await credentialsService.createCredential(req.body)
+
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
+        const apiResponse = await credentialsService.createCredential(req.body, userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -26,7 +34,15 @@ const deleteCredentials = async (req: Request, res: Response, next: NextFunction
                 `Error: credentialsController.deleteCredentials - id not provided!`
             )
         }
-        const apiResponse = await credentialsService.deleteCredentials(req.params.id)
+
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
+        const apiResponse = await credentialsService.deleteCredentials(req.params.id, userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -35,7 +51,14 @@ const deleteCredentials = async (req: Request, res: Response, next: NextFunction
 
 const getAllCredentials = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await credentialsService.getAllCredentials(req.query.credentialName)
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
+        const apiResponse = await credentialsService.getAllCredentials(req.query.credentialName, userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -50,7 +73,15 @@ const getCredentialById = async (req: Request, res: Response, next: NextFunction
                 `Error: credentialsController.getCredentialById - id not provided!`
             )
         }
-        const apiResponse = await credentialsService.getCredentialById(req.params.id)
+
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
+        const apiResponse = await credentialsService.getCredentialById(req.params.id, userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -71,7 +102,15 @@ const updateCredential = async (req: Request, res: Response, next: NextFunction)
                 `Error: credentialsController.updateCredential - body not provided!`
             )
         }
-        const apiResponse = await credentialsService.updateCredential(req.params.id, req.body)
+
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
+        const apiResponse = await credentialsService.updateCredential(req.params.id, req.body, userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
