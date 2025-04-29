@@ -45,6 +45,10 @@ const getAllDocumentStores = async (req: Request, res: Response, next: NextFunct
 
 const deleteLoaderFromDocumentStore = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
         const storeId = req.params.id
         const loaderId = req.params.loaderId
 
@@ -54,7 +58,7 @@ const deleteLoaderFromDocumentStore = async (req: Request, res: Response, next: 
                 `Error: documentStoreController.deleteLoaderFromDocumentStore - missing storeId or loaderId.`
             )
         }
-        const apiResponse = await documentStoreService.deleteLoaderFromDocumentStore(storeId, loaderId)
+        const apiResponse = await documentStoreService.deleteLoaderFromDocumentStore(storeId, loaderId, userId)
         return res.json(DocumentStoreDTO.fromEntity(apiResponse))
     } catch (error) {
         next(error)
@@ -63,13 +67,17 @@ const deleteLoaderFromDocumentStore = async (req: Request, res: Response, next: 
 
 const getDocumentStoreById = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
         if (typeof req.params.id === 'undefined' || req.params.id === '') {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: documentStoreController.getDocumentStoreById - id not provided!`
             )
         }
-        const apiResponse = await documentStoreService.getDocumentStoreById(req.params.id)
+        const apiResponse = await documentStoreService.getDocumentStoreById(req.params.id, userId)
         if (apiResponse && apiResponse.whereUsed) {
             apiResponse.whereUsed = JSON.stringify(await documentStoreService.getUsedChatflowNames(apiResponse))
         }
@@ -226,22 +234,34 @@ const updateDocumentStore = async (req: Request, res: Response, next: NextFuncti
                 `Error: documentStoreController.updateDocumentStore - storeId not provided!`
             )
         }
+
         if (typeof req.body === 'undefined') {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: documentStoreController.updateDocumentStore - body not provided!`
             )
         }
-        const store = await documentStoreService.getDocumentStoreById(req.params.id)
+
+        // 🧠 Extract userId safely
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
+        // 🧠 Now pass userId when fetching the DocumentStore
+        const store = await documentStoreService.getDocumentStoreById(req.params.id, userId)
+
         if (!store) {
             throw new InternalFlowiseError(
                 StatusCodes.NOT_FOUND,
                 `Error: documentStoreController.updateDocumentStore - DocumentStore ${req.params.id} not found in the database`
             )
         }
+
         const body = req.body
         const updateDocStore = new DocumentStore()
         Object.assign(updateDocStore, body)
+
         const apiResponse = await documentStoreService.updateDocumentStore(store, updateDocStore)
         return res.json(DocumentStoreDTO.fromEntity(apiResponse))
     } catch (error) {

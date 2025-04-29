@@ -93,10 +93,12 @@ const getAllDocumentStores = async (userId: string) => {
     }
 }
 
-const getAllDocumentFileChunks = async () => {
+const getAllDocumentFileChunks = async (userId: string) => {
     try {
         const appServer = getRunningExpressApp()
-        const entities = await appServer.AppDataSource.getRepository(DocumentStoreFileChunk).find()
+        const entities = await appServer.AppDataSource.getRepository(DocumentStoreFileChunk).find({
+            where: { userId }
+        })
         return entities
     } catch (error) {
         throw new InternalFlowiseError(
@@ -106,20 +108,26 @@ const getAllDocumentFileChunks = async () => {
     }
 }
 
-const deleteLoaderFromDocumentStore = async (storeId: string, docId: string) => {
+const deleteLoaderFromDocumentStore = async (storeId: string, docId: string, userId: string) => {
     try {
         const appServer = getRunningExpressApp()
+
+        // 🧠 Now also filter by userId to make sure the user owns the document store
         const entity = await appServer.AppDataSource.getRepository(DocumentStore).findOneBy({
-            id: storeId
+            id: storeId,
+            userId: userId
         })
+
         if (!entity) {
             throw new InternalFlowiseError(
                 StatusCodes.NOT_FOUND,
                 `Error: documentStoreServices.deleteLoaderFromDocumentStore - Document store ${storeId} not found`
             )
         }
+
         const existingLoaders = JSON.parse(entity.loaders)
         const found = existingLoaders.find((loader: IDocumentStoreLoader) => loader.id === docId)
+
         if (found) {
             if (found.files?.length) {
                 for (const file of found.files) {
@@ -132,15 +140,19 @@ const deleteLoaderFromDocumentStore = async (storeId: string, docId: string) => 
                     }
                 }
             }
+
             const index = existingLoaders.indexOf(found)
             if (index > -1) {
                 existingLoaders.splice(index, 1)
             }
-            // remove the chunks
+
+            // 🧠 Optional: you may also want to double-check DocumentStoreFileChunk deletion respects userId, but that's for another day.
+
             await appServer.AppDataSource.getRepository(DocumentStoreFileChunk).delete({ docId: found.id })
 
             entity.loaders = JSON.stringify(existingLoaders)
             const results = await appServer.AppDataSource.getRepository(DocumentStore).save(entity)
+
             return results
         } else {
             throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Unable to locate loader in Document Store ${entity.name}`)
@@ -153,18 +165,22 @@ const deleteLoaderFromDocumentStore = async (storeId: string, docId: string) => 
     }
 }
 
-const getDocumentStoreById = async (storeId: string) => {
+const getDocumentStoreById = async (storeId: string, userId: string) => {
     try {
         const appServer = getRunningExpressApp()
+
         const entity = await appServer.AppDataSource.getRepository(DocumentStore).findOneBy({
-            id: storeId
+            id: storeId,
+            userId: userId // 🧠 Must match the logged-in user's ID
         })
+
         if (!entity) {
             throw new InternalFlowiseError(
                 StatusCodes.NOT_FOUND,
                 `Error: documentStoreServices.getDocumentStoreById - Document store ${storeId} not found`
             )
         }
+
         return entity
     } catch (error) {
         throw new InternalFlowiseError(
