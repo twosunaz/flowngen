@@ -148,6 +148,7 @@ export interface IExecuteVectorStoreInsert extends IUpsertQueueAppServer {
     data: ICommonObject
     isStrictSave: boolean
     isVectorStoreInsert: boolean
+    userId: string // 🧠 Add this line
 }
 
 const getFileName = (fileBase64: string) => {
