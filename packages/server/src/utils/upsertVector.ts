@@ -228,6 +228,13 @@ export const upsertVector = async (req: Request, isInternal: boolean = false) =>
             }
         }
 
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
         const executeData: IExecuteFlowParams = {
             componentNodes: appServer.nodesPool.componentNodes,
             incomingInput,
@@ -240,7 +247,8 @@ export const upsertVector = async (req: Request, isInternal: boolean = false) =>
             baseURL,
             isInternal,
             files,
-            isUpsert: true
+            isUpsert: true,
+            userId // 🧠 ADD THIS LINE
         }
 
         if (process.env.MODE === MODE.QUEUE) {

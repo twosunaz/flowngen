@@ -43,19 +43,23 @@ export const utilGetChatMessage = async ({
     endDate,
     messageId,
     feedback,
-    feedbackTypes
-}: GetChatMessageParams): Promise<ChatMessage[]> => {
+    feedbackTypes,
+    userId // 🧠 Add userId
+}: GetChatMessageParams & { userId?: string }): Promise<ChatMessage[]> => {
     const appServer = getRunningExpressApp()
 
     if (feedback) {
         const query = await appServer.AppDataSource.getRepository(ChatMessage).createQueryBuilder('chat_message')
 
-        // do the join with chat message feedback based on messageId for each chat message in the chatflow
         query
             .leftJoinAndMapOne('chat_message.feedback', ChatMessageFeedback, 'feedback', 'feedback.messageId = chat_message.id')
             .where('chat_message.chatflowid = :chatflowid', { chatflowid })
 
-        // based on which parameters are available add `andWhere` clauses to the query
+        // 🧠 Enforce userId filter if available
+        if (userId) {
+            query.andWhere('chat_message.userId = :userId', { userId })
+        }
+
         if (chatTypes && chatTypes.length > 0) {
             query.andWhere('chat_message.chatType IN (:...chatTypes)', { chatTypes })
         }
@@ -69,7 +73,6 @@ export const utilGetChatMessage = async ({
             query.andWhere('chat_message.sessionId = :sessionId', { sessionId })
         }
 
-        // set date range
         if (startDate) {
             query.andWhere('chat_message.createdDate >= :startDateTime', { startDateTime: startDate ? new Date(startDate) : aMonthAgo() })
         }
@@ -77,14 +80,11 @@ export const utilGetChatMessage = async ({
             query.andWhere('chat_message.createdDate <= :endDateTime', { endDateTime: endDate ? new Date(endDate) : new Date() })
         }
 
-        // sort
         query.orderBy('chat_message.createdDate', sortOrder === 'DESC' ? 'DESC' : 'ASC')
 
         const messages = (await query.getMany()) as Array<ChatMessage & { feedback: ChatMessageFeedback }>
 
         if (feedbackTypes && feedbackTypes.length > 0) {
-            // just applying a filter to the messages array will only return the messages that have feedback,
-            // but we also want the message before the feedback message which is the user message.
             const indicesToKeep = new Set()
 
             messages.forEach((message, index) => {
@@ -111,6 +111,7 @@ export const utilGetChatMessage = async ({
         }
     }
 
+    // 🧠 Enforce userId filter here too
     return await appServer.AppDataSource.getRepository(ChatMessage).find({
         where: {
             chatflowid,
@@ -119,7 +120,8 @@ export const utilGetChatMessage = async ({
             memoryType: memoryType ?? undefined,
             sessionId: sessionId ?? undefined,
             createdDate: createdDateQuery,
-            id: messageId ?? undefined
+            id: messageId ?? undefined,
+            userId: userId ?? undefined // 🧠 Added userId check
         },
         order: {
             createdDate: sortOrder === 'DESC' ? 'DESC' : 'ASC'

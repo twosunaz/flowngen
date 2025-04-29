@@ -235,7 +235,8 @@ export const executeFlow = async ({
     baseURL,
     isInternal,
     files,
-    signal
+    signal,
+    userId
 }: IExecuteFlowParams) => {
     const question = incomingInput.question
     let overrideConfig = incomingInput.overrideConfig ?? {}
@@ -490,7 +491,8 @@ export const executeFlow = async ({
                 sessionId,
                 createdDate: userMessageDateTime,
                 fileUploads: incomingInput.uploads ? JSON.stringify(fileUploads) : undefined,
-                leadEmail: incomingInput.leadEmail
+                leadEmail: incomingInput.leadEmail,
+                userId
             }
             await utilAddChatMessage(userMessage, appDataSource)
 
@@ -502,7 +504,8 @@ export const executeFlow = async ({
                 chatType: isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
                 chatId,
                 memoryType,
-                sessionId
+                sessionId,
+                userId
             }
 
             if (sourceDocuments?.length) apiMessage.sourceDocuments = JSON.stringify(sourceDocuments)
@@ -632,7 +635,8 @@ export const executeFlow = async ({
             sessionId,
             createdDate: userMessageDateTime,
             fileUploads: uploads ? JSON.stringify(fileUploads) : undefined,
-            leadEmail: incomingInput.leadEmail
+            leadEmail: incomingInput.leadEmail,
+            userId
         }
         await utilAddChatMessage(userMessage, appDataSource)
 
@@ -649,7 +653,8 @@ export const executeFlow = async ({
             chatType: isInternal ? ChatType.INTERNAL : ChatType.EXTERNAL,
             chatId,
             memoryType,
-            sessionId
+            sessionId,
+            userId
         }
         if (result?.sourceDocuments) apiMessage.sourceDocuments = JSON.stringify(result.sourceDocuments)
         if (result?.usedTools) apiMessage.usedTools = JSON.stringify(result.usedTools)
@@ -773,6 +778,13 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             }
         }
 
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
         const executeData: IExecuteFlowParams = {
             incomingInput: req.body,
             chatflow,
@@ -784,7 +796,8 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             sseStreamer: appServer.sseStreamer,
             telemetry: appServer.telemetry,
             cachePool: appServer.cachePool,
-            componentNodes: appServer.nodesPool.componentNodes
+            componentNodes: appServer.nodesPool.componentNodes,
+            userId // 🧠 ADD THIS LINE
         }
 
         if (process.env.MODE === MODE.QUEUE) {
@@ -802,7 +815,6 @@ export const utilBuildChatflow = async (req: Request, isInternal: boolean = fals
             incrementSuccessMetricCounter(appServer.metricsProvider, isInternal, isAgentFlow)
             return result
         } else {
-            // Add abort controller to the pool
             const signal = new AbortController()
             appServer.abortControllerPool.add(abortControllerId, signal)
             executeData.signal = signal

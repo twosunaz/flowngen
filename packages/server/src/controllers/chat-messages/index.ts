@@ -40,7 +40,16 @@ const createChatMessage = async (req: Request, res: Response, next: NextFunction
                 'Error: chatMessagesController.createChatMessage - request body not provided!'
             )
         }
-        const apiResponse = await chatMessagesService.createChatMessage(req.body)
+
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
+        const apiResponse = await chatMessagesService.createChatMessage(req.body, userId)
+
         return res.json(parseAPIResponse(apiResponse))
     } catch (error) {
         next(error)
@@ -74,12 +83,21 @@ const getAllChatMessages = async (req: Request, res: Response, next: NextFunctio
         if (feedbackTypeFilters) {
             feedbackTypeFilters = getFeedbackTypeFilters(feedbackTypeFilters)
         }
+
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: chatMessageController.getAllChatMessages - id not provided!`
             )
         }
+
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
         const apiResponse = await chatMessagesService.getAllChatMessages(
             req.params.id,
             chatTypes,
@@ -91,7 +109,8 @@ const getAllChatMessages = async (req: Request, res: Response, next: NextFunctio
             endDate,
             messageId,
             feedback,
-            feedbackTypeFilters
+            feedbackTypeFilters,
+            userId // 🧠 Pass userId to the service
         )
 
         return res.json(parseAPIResponse(apiResponse))
@@ -114,6 +133,14 @@ const getAllInternalChatMessages = async (req: Request, res: Response, next: Nex
         if (feedbackTypeFilters) {
             feedbackTypeFilters = getFeedbackTypeFilters(feedbackTypeFilters)
         }
+
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
         const apiResponse = await chatMessagesService.getAllInternalChatMessages(
             req.params.id,
             [ChatType.INTERNAL],
@@ -125,8 +152,10 @@ const getAllInternalChatMessages = async (req: Request, res: Response, next: Nex
             endDate,
             messageId,
             feedback,
-            feedbackTypeFilters
+            feedbackTypeFilters,
+            userId // 🧠 Pass userId to service
         )
+
         return res.json(parseAPIResponse(apiResponse))
     } catch (error) {
         next(error)
@@ -262,7 +291,26 @@ const abortChatMessage = async (req: Request, res: Response, next: NextFunction)
                 `Error: chatMessagesController.abortChatMessage - chatflowid or chatid not provided!`
             )
         }
-        await chatMessagesService.abortChatMessage(req.params.chatid, req.params.chatflowid)
+
+        // 🧠 Extract userId
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = user.id
+
+        const chatflowId = req.params.chatflowid
+        const chatId = req.params.chatid
+
+        // 🧠 Validate that the user owns the chatflow
+        const chatflow = await chatflowsService.getChatflowById(chatflowId, userId)
+        if (!chatflow) {
+            return res.status(404).send(`Chatflow ${chatflowId} not found or unauthorized`)
+        }
+
+        // If ownership is validated, then abort
+        await chatMessagesService.abortChatMessage(chatId, chatflowId)
+
         return res.json({ status: 200, message: 'Chat message aborted' })
     } catch (error) {
         next(error)

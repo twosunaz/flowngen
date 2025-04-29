@@ -12,8 +12,11 @@ import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { getErrorMessage } from '../../errors/utils'
 
 // Add chatmessages for chatflowid
-const createChatMessage = async (chatMessage: Partial<IChatMessage>) => {
+const createChatMessage = async (chatMessage: Partial<IChatMessage>, userId: string) => {
     try {
+        // 🧠 Force-attach userId
+        chatMessage.userId = userId
+
         const dbResponse = await utilAddChatMessage(chatMessage)
         return dbResponse
     } catch (error) {
@@ -36,7 +39,8 @@ const getAllChatMessages = async (
     endDate?: string,
     messageId?: string,
     feedback?: boolean,
-    feedbackTypes?: ChatMessageRatingType[]
+    feedbackTypes?: ChatMessageRatingType[],
+    userId?: string // 🧠 Added userId parameter
 ): Promise<ChatMessage[]> => {
     try {
         const dbResponse = await utilGetChatMessage({
@@ -50,7 +54,8 @@ const getAllChatMessages = async (
             endDate,
             messageId,
             feedback,
-            feedbackTypes
+            feedbackTypes,
+            userId // 🧠 Pass userId into the query
         })
         return dbResponse
     } catch (error) {
@@ -73,7 +78,8 @@ const getAllInternalChatMessages = async (
     endDate?: string,
     messageId?: string,
     feedback?: boolean,
-    feedbackTypes?: ChatMessageRatingType[]
+    feedbackTypes?: ChatMessageRatingType[],
+    userId?: string // 🧠 Added userId
 ): Promise<ChatMessage[]> => {
     try {
         const dbResponse = await utilGetChatMessage({
@@ -87,7 +93,8 @@ const getAllInternalChatMessages = async (
             endDate,
             messageId,
             feedback,
-            feedbackTypes
+            feedbackTypes,
+            userId // 🧠 Passed userId here
         })
         return dbResponse
     } catch (error) {

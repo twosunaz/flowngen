@@ -71,6 +71,7 @@ export interface IChatMessage {
     leadEmail?: string
     action?: string | null
     followUpPrompts?: string
+    userId: string
 }
 
 export interface IChatMessageFeedback {
@@ -334,6 +335,7 @@ export interface IExecuteFlowParams extends IPredictionQueueAppServer {
     signal?: AbortController
     files?: Express.Multer.File[]
     isUpsert?: boolean
+    userId: string
 }
 
 export interface INodeOverrides {
