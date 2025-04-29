@@ -14,9 +14,14 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
 
+    // if (!token) {
+    //     console.log('[verifyToken] Missing token')
+    //     return res.status(401).json({ success: false, message: 'Missing token' })
+    // }
     if (!token) {
         console.log('[verifyToken] Missing token')
-        return res.status(401).json({ success: false, message: 'Missing token' })
+        const acceptsHtml = req.accepts(['html', 'json']) === 'html'
+        return acceptsHtml ? res.redirect('/chatflows') : res.status(401).json({ success: false, message: 'Missing token' })
     }
 
     try {
