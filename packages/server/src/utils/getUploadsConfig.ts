@@ -17,13 +17,17 @@ type IUploadConfig = {
  * Method that checks if uploads are enabled in the chatflow
  * @param {string} chatflowid
  */
-export const utilGetUploadsConfig = async (chatflowid: string): Promise<IUploadConfig> => {
+export const utilGetUploadsConfig = async (chatflowid: string, userId: string): Promise<IUploadConfig> => {
     const appServer = getRunningExpressApp()
+
+    // 🧠 Secure find: Chatflow must belong to userId
     const chatflow = await appServer.AppDataSource.getRepository(ChatFlow).findOneBy({
-        id: chatflowid
+        id: chatflowid,
+        userId: userId
     })
+
     if (!chatflow) {
-        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
+        throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found or unauthorized`)
     }
 
     const flowObj = JSON.parse(chatflow.flowData)
@@ -52,12 +56,10 @@ export const utilGetUploadsConfig = async (chatflowid: string): Promise<IUploadC
 
     /*
      * Condition for isRAGFileUploadAllowed
-     * 1.) vector store with fileUpload = true && connected to a document loader with fileType
      */
     const fileUploadSizeAndTypes: IUploadFileSizeAndTypes[] = []
     for (const node of nodes) {
         if (node.data.category === 'Vector Stores' && node.data.inputs?.fileUpload) {
-            // Get the connected document loader node fileTypes
             const sourceDocumentEdges = edges.filter(
                 (edge) => edge.target === node.id && edge.targetHandle === `${node.id}-input-document-Document`
             )
@@ -79,8 +81,6 @@ export const utilGetUploadsConfig = async (chatflowid: string): Promise<IUploadC
 
     /*
      * Condition for isImageUploadAllowed
-     * 1.) one of the imgUploadAllowedNodes exists
-     * 2.) one of the imgUploadLLMNodes exists + allowImageUploads is ON
      */
     const imgUploadSizeAndTypes: IUploadFileSizeAndTypes[] = []
     const imgUploadAllowedNodes = [
@@ -97,7 +97,6 @@ export const utilGetUploadsConfig = async (chatflowid: string): Promise<IUploadC
         nodes.forEach((node: IReactFlowNode) => {
             const data = node.data
             if (data.category === 'Chat Models' && data.inputs?.['allowImageUploads'] === true) {
-                // TODO: for now the maxUploadSize is hardcoded to 5MB, we need to add it to the node properties
                 node.data.inputParams.map((param: INodeParams) => {
                     if (param.name === 'allowImageUploads' && node.data.inputs?.['allowImageUploads']) {
                         imgUploadSizeAndTypes.push({

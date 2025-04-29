@@ -24,7 +24,15 @@ const checkIfChatflowIsValidForUploads = async (req: Request, res: Response, nex
         if (!req.params?.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, 'Chatflow ID not provided')
         }
-        const apiResponse = await chatflowsService.checkIfChatflowIsValidForUploads(req.params.id)
+
+        // 🧠 Extract userId
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
+        const apiResponse = await chatflowsService.checkIfChatflowIsValidForUploads(req.params.id, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -152,7 +160,15 @@ const getSinglePublicChatbotConfig = async (req: Request, res: Response, next: N
         if (!req.params?.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, 'Chatflow ID not provided')
         }
-        const apiResponse = await chatflowsService.getSinglePublicChatbotConfig(req.params.id)
+
+        // 🧠 Extract userId
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
+        const apiResponse = await chatflowsService.getSinglePublicChatbotConfig(req.params.id, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)

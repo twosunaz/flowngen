@@ -44,9 +44,9 @@ const checkIfChatflowIsValidForStreaming = async (chatflowId: string, userId: st
     }
 }
 
-const checkIfChatflowIsValidForUploads = async (chatflowId: string): Promise<any> => {
+const checkIfChatflowIsValidForUploads = async (chatflowId: string, userId: string): Promise<any> => {
     try {
-        return await utilGetUploadsConfig(chatflowId)
+        return await utilGetUploadsConfig(chatflowId, userId)
     } catch (error) {
         throw new InternalFlowiseError(
             StatusCodes.INTERNAL_SERVER_ERROR,
@@ -230,12 +230,22 @@ const getSinglePublicChatflow = async (chatflowId: string): Promise<any> => {
     }
 }
 
-const getSinglePublicChatbotConfig = async (chatflowId: string): Promise<any> => {
+const getSinglePublicChatbotConfig = async (chatflowId: string, userId: string): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
-        const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).findOneBy({ id: chatflowId })
-        if (!dbResponse) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found`)
-        const uploadsConfig = await utilGetUploadsConfig(chatflowId)
+
+        // 🧠 Secure find with userId
+        const dbResponse = await appServer.AppDataSource.getRepository(ChatFlow).findOneBy({
+            id: chatflowId,
+            userId: userId
+        })
+
+        if (!dbResponse) {
+            throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowId} not found or unauthorized`)
+        }
+
+        const uploadsConfig = await utilGetUploadsConfig(chatflowId, userId)
+
         if (dbResponse.chatbotConfig || uploadsConfig) {
             try {
                 const parsedConfig = dbResponse.chatbotConfig ? JSON.parse(dbResponse.chatbotConfig) : {}
@@ -244,6 +254,7 @@ const getSinglePublicChatbotConfig = async (chatflowId: string): Promise<any> =>
                 throw new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Error parsing Chatbot Config for Chatflow ${chatflowId}`)
             }
         }
+
         return 'OK'
     } catch (error) {
         throw new InternalFlowiseError(

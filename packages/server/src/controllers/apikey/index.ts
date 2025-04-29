@@ -3,10 +3,16 @@ import { StatusCodes } from 'http-status-codes'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import apikeyService from '../../services/apikey'
 
-// Get api keys
 const getAllApiKeys = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const apiResponse = await apikeyService.getAllApiKeys()
+        // 🧠 Extract userId
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
+        const apiResponse = await apikeyService.getAllApiKeys(userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -18,14 +24,21 @@ const createApiKey = async (req: Request, res: Response, next: NextFunction) => 
         if (typeof req.body === 'undefined' || !req.body.keyName) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: apikeyController.createApiKey - keyName not provided!`)
         }
-        const apiResponse = await apikeyService.createApiKey(req.body.keyName)
+
+        // 🧠 Extract userId
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
+        const apiResponse = await apikeyService.createApiKey(req.body.keyName, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
     }
 }
 
-// Update api key
 const updateApiKey = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
@@ -34,33 +47,55 @@ const updateApiKey = async (req: Request, res: Response, next: NextFunction) => 
         if (typeof req.body === 'undefined' || !req.body.keyName) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: apikeyController.updateApiKey - keyName not provided!`)
         }
-        const apiResponse = await apikeyService.updateApiKey(req.params.id, req.body.keyName)
+
+        // 🧠 Extract userId
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
+        const apiResponse = await apikeyService.updateApiKey(req.params.id, req.body.keyName, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
     }
 }
 
-// Import Keys from JSON file
 const importKeys = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.body === 'undefined' || !req.body.jsonFile) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: apikeyController.importKeys - body not provided!`)
         }
-        const apiResponse = await apikeyService.importKeys(req.body)
+
+        // 🧠 Extract userId
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
+        const apiResponse = await apikeyService.importKeys(req.body, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
     }
 }
 
-// Delete api key
 const deleteApiKey = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: apikeyController.deleteApiKey - id not provided!`)
         }
-        const apiResponse = await apikeyService.deleteApiKey(req.params.id)
+
+        // 🧠 Extract userId
+        if (!req.user || !req.user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+        const userId = req.user.id
+
+        const apiResponse = await apikeyService.deleteApiKey(req.params.id, userId)
+
         return res.json(apiResponse)
     } catch (error) {
         next(error)
