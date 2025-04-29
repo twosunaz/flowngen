@@ -9,13 +9,20 @@ import { streamStorageFile } from 'flowise-components'
 // List available assistants
 const getAllOpenaiAssistants = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        if (typeof req.query === 'undefined' || !req.query.credential) {
+        if (!req.query?.credential) {
             throw new InternalFlowiseError(
                 StatusCodes.PRECONDITION_FAILED,
                 `Error: openaiAssistantsController.getAllOpenaiAssistants - credential not provided!`
             )
         }
-        const apiResponse = await openaiAssistantsService.getAllOpenaiAssistants(req.query.credential as string)
+        if (!req.user?.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `User ID not found in request!`)
+        }
+
+        const credentialId = req.query.credential as string
+        const userId = req.user.id
+
+        const apiResponse = await openaiAssistantsService.getAllOpenaiAssistants(credentialId, userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -37,7 +44,19 @@ const getSingleOpenaiAssistant = async (req: Request, res: Response, next: NextF
                 `Error: openaiAssistantsController.getSingleOpenaiAssistant - credential not provided!`
             )
         }
-        const apiResponse = await openaiAssistantsService.getSingleOpenaiAssistant(req.query.credential as string, req.params.id)
+
+        if (!req.user?.id) {
+            throw new InternalFlowiseError(
+                StatusCodes.UNAUTHORIZED,
+                `Error: openaiAssistantsController.getSingleOpenaiAssistant - User ID not found!`
+            )
+        }
+
+        const apiResponse = await openaiAssistantsService.getSingleOpenaiAssistant(
+            req.query.credential as string,
+            req.params.id,
+            req.user.id // 🧠 pass userId here
+        )
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -76,12 +95,17 @@ const uploadAssistantFiles = async (req: Request, res: Response, next: NextFunct
                 `Error: openaiAssistantsVectorStoreController.uploadFilesToAssistantVectorStore - credential not provided!`
             )
         }
+
+        const userId = req.user?.id
+        if (!userId) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
+        }
+
         const files = req.files ?? []
         const uploadFiles: { filePath: string; fileName: string }[] = []
 
         if (Array.isArray(files)) {
             for (const file of files) {
-                // Address file name with special characters: https://github.com/expressjs/multer/issues/1104
                 file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8')
                 uploadFiles.push({
                     filePath: file.path ?? file.key,
@@ -90,7 +114,7 @@ const uploadAssistantFiles = async (req: Request, res: Response, next: NextFunct
             }
         }
 
-        const apiResponse = await openaiAssistantsService.uploadFilesToAssistant(req.query.credential as string, uploadFiles)
+        const apiResponse = await openaiAssistantsService.uploadFilesToAssistant(req.query.credential as string, uploadFiles, userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

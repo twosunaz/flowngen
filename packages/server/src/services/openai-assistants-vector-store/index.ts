@@ -7,12 +7,14 @@ import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { decryptCredentialData } from '../../utils'
 import { getFileFromUpload, removeSpecificFileFromUpload } from 'flowise-components'
 
-const getAssistantVectorStore = async (credentialId: string, vectorStoreId: string) => {
+const getAssistantVectorStore = async (credentialId: string, vectorStoreId: string, userId: string) => {
     try {
         const appServer = getRunningExpressApp()
         const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({
-            id: credentialId
+            id: credentialId,
+            userId
         })
+
         if (!credential) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
         }
@@ -34,12 +36,11 @@ const getAssistantVectorStore = async (credentialId: string, vectorStoreId: stri
     }
 }
 
-const listAssistantVectorStore = async (credentialId: string) => {
+const listAssistantVectorStore = async (credentialId: string, userId: string) => {
     try {
         const appServer = getRunningExpressApp()
-        const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({
-            id: credentialId
-        })
+        const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({ id: credentialId, userId })
+
         if (!credential) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
         }
@@ -61,12 +62,11 @@ const listAssistantVectorStore = async (credentialId: string) => {
     }
 }
 
-const createAssistantVectorStore = async (credentialId: string, obj: OpenAI.Beta.VectorStores.VectorStoreCreateParams) => {
+const createAssistantVectorStore = async (credentialId: string, obj: OpenAI.Beta.VectorStores.VectorStoreCreateParams, userId: string) => {
     try {
         const appServer = getRunningExpressApp()
-        const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({
-            id: credentialId
-        })
+        const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({ id: credentialId, userId })
+
         if (!credential) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
         }
@@ -91,13 +91,13 @@ const createAssistantVectorStore = async (credentialId: string, obj: OpenAI.Beta
 const updateAssistantVectorStore = async (
     credentialId: string,
     vectorStoreId: string,
-    obj: OpenAI.Beta.VectorStores.VectorStoreUpdateParams
+    obj: OpenAI.Beta.VectorStores.VectorStoreUpdateParams,
+    userId: string
 ) => {
     try {
         const appServer = getRunningExpressApp()
-        const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({
-            id: credentialId
-        })
+        const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({ id: credentialId, userId })
+
         if (!credential) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
         }
@@ -128,12 +128,11 @@ const updateAssistantVectorStore = async (
     }
 }
 
-const deleteAssistantVectorStore = async (credentialId: string, vectorStoreId: string) => {
+const deleteAssistantVectorStore = async (credentialId: string, vectorStoreId: string, userId: string) => {
     try {
         const appServer = getRunningExpressApp()
-        const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({
-            id: credentialId
-        })
+        const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({ id: credentialId, userId })
+
         if (!credential) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
         }
@@ -158,13 +157,13 @@ const deleteAssistantVectorStore = async (credentialId: string, vectorStoreId: s
 const uploadFilesToAssistantVectorStore = async (
     credentialId: string,
     vectorStoreId: string,
-    files: { filePath: string; fileName: string }[]
+    files: { filePath: string; fileName: string }[],
+    userId: string
 ): Promise<any> => {
     try {
         const appServer = getRunningExpressApp()
-        const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({
-            id: credentialId
-        })
+        const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({ id: credentialId, userId })
+
         if (!credential) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
         }
@@ -212,12 +211,11 @@ const uploadFilesToAssistantVectorStore = async (
     }
 }
 
-const deleteFilesFromAssistantVectorStore = async (credentialId: string, vectorStoreId: string, file_ids: string[]) => {
+const deleteFilesFromAssistantVectorStore = async (credentialId: string, vectorStoreId: string, file_ids: string[], userId: string) => {
     try {
         const appServer = getRunningExpressApp()
-        const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({
-            id: credentialId
-        })
+        const credential = await appServer.AppDataSource.getRepository(Credential).findOneBy({ id: credentialId, userId })
+
         if (!credential) {
             throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Credential ${credentialId} not found in the database!`)
         }
