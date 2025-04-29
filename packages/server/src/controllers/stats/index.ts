@@ -6,6 +6,10 @@ import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 
 const getChatflowStats = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const userId = req.user?.id
+        if (!userId) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, `User not authenticated`)
+        }
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(StatusCodes.PRECONDITION_FAILED, `Error: statsController.getChatflowStats - id not provided!`)
         }
@@ -45,7 +49,16 @@ const getChatflowStats = async (req: Request, res: Response, next: NextFunction)
                 return res.status(500).send(e)
             }
         }
-        const apiResponse = await statsService.getChatflowStats(chatflowid, chatTypes, startDate, endDate, '', true, feedbackTypeFilters)
+        const apiResponse = await statsService.getChatflowStats(
+            chatflowid,
+            userId,
+            chatTypes,
+            startDate,
+            endDate,
+            '',
+            true,
+            feedbackTypeFilters
+        )
         return res.json(apiResponse)
     } catch (error) {
         next(error)

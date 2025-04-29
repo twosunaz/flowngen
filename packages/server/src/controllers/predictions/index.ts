@@ -12,7 +12,6 @@ import { MODE } from '../../Interface'
 
 // Send input message and get prediction result (External)
 const createPrediction = async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.user?.id
     try {
         if (typeof req.params === 'undefined' || !req.params.id) {
             throw new InternalFlowiseError(

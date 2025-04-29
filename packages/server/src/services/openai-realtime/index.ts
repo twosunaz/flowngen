@@ -21,10 +21,11 @@ import { Variable } from '../../database/entities/Variable'
 const SOURCE_DOCUMENTS_PREFIX = '\n\n----FLOWISE_SOURCE_DOCUMENTS----\n\n'
 const ARTIFACTS_PREFIX = '\n\n----FLOWISE_ARTIFACTS----\n\n'
 
-const buildAndInitTool = async (chatflowid: string, _chatId?: string, _apiMessageId?: string) => {
+const buildAndInitTool = async (chatflowid: string, userId: string, _chatId?: string, _apiMessageId?: string) => {
     const appServer = getRunningExpressApp()
     const chatflow = await appServer.AppDataSource.getRepository(ChatFlow).findOneBy({
-        id: chatflowid
+        id: chatflowid,
+        userId: userId
     })
     if (!chatflow) {
         throw new InternalFlowiseError(StatusCodes.NOT_FOUND, `Chatflow ${chatflowid} not found`)
@@ -121,9 +122,9 @@ const buildAndInitTool = async (chatflowid: string, _chatId?: string, _apiMessag
     return agent
 }
 
-const getAgentTools = async (chatflowid: string): Promise<any> => {
+const getAgentTools = async (chatflowid: string, userId: string): Promise<any> => {
     try {
-        const agent = await buildAndInitTool(chatflowid)
+        const agent = await buildAndInitTool(chatflowid, userId)
         const tools = agent.tools
         return tools.map(convertToOpenAIFunction)
     } catch (error) {
@@ -139,10 +140,11 @@ const executeAgentTool = async (
     chatId: string,
     toolName: string,
     inputArgs: string,
+    userId: string,
     apiMessageId?: string
 ): Promise<any> => {
     try {
-        const agent = await buildAndInitTool(chatflowid, chatId, apiMessageId)
+        const agent = await buildAndInitTool(chatflowid, userId, chatId, apiMessageId)
         const tools = agent.tools
         const tool = tools.find((tool: any) => tool.name === toolName)
 

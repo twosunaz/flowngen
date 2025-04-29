@@ -9,6 +9,7 @@ import { getErrorMessage } from '../../errors/utils'
 // get stats for showing in chatflow
 const getChatflowStats = async (
     chatflowid: string,
+    userId: string,
     chatTypes: ChatType[] | undefined,
     startDate?: string,
     endDate?: string,
@@ -19,6 +20,7 @@ const getChatflowStats = async (
     try {
         const chatmessages = (await utilGetChatMessage({
             chatflowid,
+            userId,
             chatTypes,
             startDate,
             endDate,

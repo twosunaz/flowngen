@@ -11,7 +11,11 @@ const getAgentTools = async (req: Request, res: Response, next: NextFunction) =>
                 `Error: openaiRealTimeController.getAgentTools - id not provided!`
             )
         }
-        const apiResponse = await openaiRealTimeService.getAgentTools(req.params.id)
+        if (!req.user?.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User ID not found in request!')
+        }
+
+        const apiResponse = await openaiRealTimeService.getAgentTools(req.params.id, req.user.id)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -50,11 +54,16 @@ const executeAgentTool = async (req: Request, res: Response, next: NextFunction)
                 `Error: openaiRealTimeController.executeAgentTool - body inputArgs not provided!`
             )
         }
+        if (!req.user?.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User ID not found in request!')
+        }
+
         const apiResponse = await openaiRealTimeService.executeAgentTool(
             req.params.id,
             req.body.chatId,
             req.body.toolName,
             req.body.inputArgs,
+            req.user.id, // 🧠 Pass userId
             req.body.apiMessageId
         )
         return res.json(apiResponse)
