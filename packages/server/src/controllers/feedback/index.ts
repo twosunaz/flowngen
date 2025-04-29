@@ -11,12 +11,20 @@ const getAllChatMessageFeedback = async (req: Request, res: Response, next: Next
                 `Error: feedbackController.getAllChatMessageFeedback - id not provided!`
             )
         }
+
+        const user = req.user as { id: string } | undefined
+        if (!user || !user.id) {
+            throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User ID not found in request')
+        }
+        const userId = user.id
+
         const chatflowid = req.params.id
         const chatId = req.query?.chatId as string | undefined
         const sortOrder = req.query?.order as string | undefined
         const startDate = req.query?.startDate as string | undefined
         const endDate = req.query?.endDate as string | undefined
-        const apiResponse = await feedbackService.getAllChatMessageFeedback(chatflowid, chatId, sortOrder, startDate, endDate)
+
+        const apiResponse = await feedbackService.getAllChatMessageFeedback(chatflowid, userId, chatId, sortOrder, startDate, endDate)
         return res.json(apiResponse)
     } catch (error) {
         next(error)

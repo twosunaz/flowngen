@@ -9,13 +9,14 @@ import { getErrorMessage } from '../../errors/utils'
 // Get all chatmessage feedback from chatflowid
 const getAllChatMessageFeedback = async (
     chatflowid: string,
+    userId: string,
     chatId: string | undefined,
     sortOrder: string | undefined,
     startDate: string | undefined,
     endDate: string | undefined
 ) => {
     try {
-        const dbResponse = await utilGetChatMessageFeedback(chatflowid, chatId, sortOrder, startDate, endDate)
+        const dbResponse = await utilGetChatMessageFeedback(chatflowid, userId, chatId, sortOrder, startDate, endDate)
         return dbResponse
     } catch (error) {
         throw new InternalFlowiseError(
