@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Dialog, DialogActions, DialogContent, Typography, DialogTitle } from '@mui/material'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { Input } from '@/ui-component/input/Input'
-
+import { toast } from 'react-toastify'
 const ForgotPasswordDialog = ({ show, onClose }) => {
     const portalElement = document.getElementById('portal')
     const [email, setEmail] = useState('')
@@ -19,13 +19,13 @@ const ForgotPasswordDialog = ({ show, onClose }) => {
 
             const data = await response.json()
             if (response.ok) {
-                alert('📧 Reset email sent!')
+                toast.info('📧 Reset email sent!')
                 onClose()
             } else {
-                alert('❌ Failed to send email: ' + data.message)
+                toast.error('❌ Failed to send email: ' + data.message)
             }
         } catch (error) {
-            alert('🚨 Network error: ' + error.message)
+            toast.error('🚨 Network error: ' + error.message)
         }
     }
 

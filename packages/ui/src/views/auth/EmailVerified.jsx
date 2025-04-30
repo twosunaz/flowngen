@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom'
 import { Box, Typography, Paper, Button } from '@mui/material'
-
+import { toast } from 'react-toastify'
 const EmailVerified = () => {
     const [searchParams] = useSearchParams()
     const status = searchParams.get('status')
@@ -8,14 +8,14 @@ const EmailVerified = () => {
     const getMessage = () => {
         switch (status) {
             case 'success':
-                return '✅ Your email has been verified! You may now log in.'
+                return toast.success('✅ Your email has been verified! You may now log in.')
             case 'invalid-token':
-                return '❌ Invalid verification token.'
+                return toast.error('❌ Invalid verification token.')
             case 'not-found':
-                return '❌ Verification token not found or already used.'
+                return toast.error('❌ Verification token not found or already used.')
             case 'error':
             default:
-                return '🚨 An error occurred during verification. Please try again.'
+                return toast.error('🚨 An error occurred during verification. Please try again.')
         }
     }
 

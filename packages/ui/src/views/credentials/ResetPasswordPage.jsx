@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Box, Typography, TextField, Button, Paper } from '@mui/material'
+import { toast } from 'react-toastify'
 
 const ResetPasswordPage = () => {
     const [searchParams] = useSearchParams()
@@ -23,7 +24,7 @@ const ResetPasswordPage = () => {
 
         const error = validatePassword(newPassword)
         if (error) {
-            setMessage(`❌ ${error}`)
+            toast.error(`❌ ${error}`)
             setLoading(false)
             return
         }
@@ -38,15 +39,15 @@ const ResetPasswordPage = () => {
             const data = await response.json()
 
             if (response.ok) {
-                setMessage('✅ Password reset successfully. Redirecting to login...')
+                toast.success('✅ Password reset successfully. Redirecting to login...')
                 setTimeout(() => {
                     window.location.href = '/chatflows'
                 }, 3000)
             } else {
-                setMessage('❌ ' + data.message)
+                toast.error('❌ ' + data.message)
             }
         } catch (err) {
-            setMessage('🚨 Network error: ' + err.message)
+            toast.error('🚨 Network error: ' + err.message)
         } finally {
             setLoading(false)
         }
