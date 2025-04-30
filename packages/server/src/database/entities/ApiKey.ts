@@ -4,7 +4,7 @@ import { IApiKey } from '../../Interface'
 
 @Entity('apikey')
 export class ApiKey implements IApiKey {
-    @PrimaryColumn({ type: 'varchar', length: 20 })
+    @PrimaryColumn({ type: 'varchar', length: 64 })
     id: string
 
     @Column({ nullable: false })

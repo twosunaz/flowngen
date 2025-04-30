@@ -80,6 +80,7 @@ const getApiKey = async (apiKey: string) => {
 }
 
 const createApiKey = async (keyName: string, userId: string) => {
+    console.log('[DEBUG] createApiKey called with:', keyName, userId)
     try {
         if (_apikeysStoredInJson()) {
             const keys = await addAPIKey_json(keyName)
