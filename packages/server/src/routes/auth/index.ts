@@ -8,6 +8,6 @@ router.post('/register', authController.register)
 router.post('/reset-password', authController.resetPassword)
 router.post('/forgot-password', authController.forgotPassword)
 
-router.get('/auth/verify-email', authController.verifyEmail)
+router.get('/verify-email', authController.verifyEmail)
 
 export default router
