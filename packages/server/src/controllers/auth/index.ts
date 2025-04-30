@@ -165,7 +165,7 @@ const verifyEmail = async (req: Request, res: Response) => {
         const { token } = req.query
 
         if (!token || typeof token !== 'string') {
-            return res.redirect('https://flowngen.com/email-verified?status=invalid-token')
+            return res.redirect('https://app.flowngen.com/email-verified?status=invalid-token')
         }
 
         const appServer = getRunningExpressApp()
@@ -174,7 +174,7 @@ const verifyEmail = async (req: Request, res: Response) => {
         const user = await userRepo.findOneBy({ verificationToken: token })
 
         if (!user) {
-            return res.redirect('https://flowngen.com/email-verified?status=not-found')
+            return res.redirect('https://app.flowngen.com/email-verified?status=not-found')
         }
 
         user.isVerified = true
@@ -182,10 +182,10 @@ const verifyEmail = async (req: Request, res: Response) => {
         await userRepo.save(user)
 
         // ✅ Redirect to a frontend page on success
-        return res.redirect('https://flowngen.com/email-verified?status=success')
+        return res.redirect('https://app.flowngen.com/email-verified?status=success')
     } catch (err) {
         console.error('[verifyEmail] Error verifying email:', err)
-        return res.redirect('https://flowngen.com/email-verified?status=error')
+        return res.redirect('https://app.flowngen.com/email-verified?status=error')
     }
 }
 
