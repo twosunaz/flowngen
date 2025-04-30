@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Dialog, DialogActions, DialogContent, Typography, DialogTitle } from '@mui/material'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { Input } from '@/ui-component/input/Input'
+import { toast } from 'react-toastify'
 
 const RegisterDialog = ({ show, onClose }) => {
     const portalElement = document.getElementById('portal')
@@ -21,13 +22,13 @@ const RegisterDialog = ({ show, onClose }) => {
 
             const data = await response.json()
             if (response.ok) {
-                alert('✅ Registration successful! You can now log in.')
+                toast.success('✅ Registration successful! You can now log in.')
                 onClose()
             } else {
-                alert('❌ Registration failed: ' + data.message)
+                toast.error('❌ Registration failed: ' + data.message)
             }
         } catch (error) {
-            alert('🚨 Network error: ' + error.message)
+            toast.error('🚨 Network error: ' + error.message)
         }
     }
 
