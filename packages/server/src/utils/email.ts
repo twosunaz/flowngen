@@ -19,3 +19,13 @@ export const sendVerificationEmail = async (email: string, token: string) => {
         html: `<p>Welcome to Flowngen! Click <a href="${verificationUrl}">here</a> to verify your account.</p>`
     })
 }
+
+export const sendResetEmail = async (email: string, token: string) => {
+    const resetUrl = `${process.env.RESET_PASSWORD_URL}${token}`
+    return transporter.sendMail({
+        from: process.env.EMAIL_FROM,
+        to: email,
+        subject: 'Reset your Flowngen password',
+        html: `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>`
+    })
+}

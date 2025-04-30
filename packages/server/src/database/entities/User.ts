@@ -30,4 +30,7 @@ export class User {
 
     @UpdateDateColumn()
     updated_At: Date
+
+    @Column({ type: 'text', nullable: true })
+    resetToken: string | null
 }

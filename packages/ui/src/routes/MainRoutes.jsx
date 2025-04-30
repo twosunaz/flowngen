@@ -39,6 +39,9 @@ const LoaderConfigPreviewChunks = Loadable(lazy(() => import('@/views/docstore/L
 const VectorStoreConfigure = Loadable(lazy(() => import('@/views/docstore/VectorStoreConfigure')))
 const VectorStoreQuery = Loadable(lazy(() => import('@/views/docstore/VectorStoreQuery')))
 
+// password reset routing
+const ResetPasswordPage = Loadable(lazy(() => import('@/views/credentials/ResetPasswordPage')))
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -120,6 +123,10 @@ const MainRoutes = {
         {
             path: '/document-stores/query/:storeId',
             element: <VectorStoreQuery />
+        },
+        {
+            path: '/reset-password',
+            element: <ResetPasswordPage />
         }
     ]
 }

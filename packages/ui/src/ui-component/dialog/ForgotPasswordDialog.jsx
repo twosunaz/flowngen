@@ -11,7 +11,7 @@ const ForgotPasswordDialog = ({ show, onClose }) => {
 
     const handleReset = async () => {
         try {
-            const response = await fetch('/api/v1/auth/reset-password', {
+            const response = await fetch('/api/v1/auth/forgot-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })

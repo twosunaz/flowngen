@@ -5,6 +5,8 @@ import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { User } from '../../database/entities/User'
 import { randomBytes } from 'crypto'
 import { sendVerificationEmail } from '../../utils/email'
+import * as crypto from 'crypto'
+import { sendResetEmail } from '../../utils/email'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key'
 
@@ -109,21 +111,47 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         next(error)
     }
 }
-
-const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { username, newPassword } = req.body
-        if (!username || !newPassword) {
-            return res.status(400).json({ message: 'Username and new password required' })
+        const { email } = req.body
+        if (!email) {
+            return res.status(400).json({ message: 'Email is required' })
         }
 
         const appServer = getRunningExpressApp()
         const userRepo = appServer.AppDataSource.getRepository(User)
-        const user = await userRepo.findOneBy({ username })
 
+        const user = await userRepo.findOneBy({ email })
         if (!user) return res.status(404).json({ message: 'User not found' })
 
+        const token = crypto.randomBytes(32).toString('hex')
+        user.resetToken = token
+        await userRepo.save(user)
+
+        const resetUrl = `${process.env.RESET_PASSWORD_URL}${token}`
+        await sendResetEmail(email, token)
+
+        res.status(200).json({ message: 'Reset link sent' })
+    } catch (error) {
+        next(error)
+    }
+}
+
+const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { token, newPassword } = req.body
+        if (!token || !newPassword) {
+            return res.status(400).json({ message: 'Reset token and new password required' })
+        }
+
+        const appServer = getRunningExpressApp()
+        const userRepo = appServer.AppDataSource.getRepository(User)
+
+        const user = await userRepo.findOneBy({ resetToken: token })
+        if (!user) return res.status(404).json({ message: 'Invalid or expired reset token' })
+
         user.password = await bcrypt.hash(newPassword, 10)
+        user.resetToken = null // Invalidate the token
         await userRepo.save(user)
 
         res.status(200).json({ message: 'Password reset successfully' })
@@ -137,7 +165,7 @@ const verifyEmail = async (req: Request, res: Response) => {
         const { token } = req.query
 
         if (!token || typeof token !== 'string') {
-            return res.status(400).json({ success: false, message: 'Invalid or missing token' })
+            return res.redirect('https://flowngen.com/email-verified?status=invalid-token')
         }
 
         const appServer = getRunningExpressApp()
@@ -146,17 +174,18 @@ const verifyEmail = async (req: Request, res: Response) => {
         const user = await userRepo.findOneBy({ verificationToken: token })
 
         if (!user) {
-            return res.status(404).json({ success: false, message: 'Verification token not found or expired' })
+            return res.redirect('https://flowngen.com/email-verified?status=not-found')
         }
 
         user.isVerified = true
         user.verificationToken = null // Optional: clear the token
         await userRepo.save(user)
 
-        return res.status(200).json({ success: true, message: 'Email successfully verified!' })
+        // ✅ Redirect to a frontend page on success
+        return res.redirect('https://flowngen.com/email-verified?status=success')
     } catch (err) {
         console.error('[verifyEmail] Error verifying email:', err)
-        return res.status(500).json({ success: false, message: 'Internal server error' })
+        return res.redirect('https://flowngen.com/email-verified?status=error')
     }
 }
 
@@ -164,6 +193,7 @@ export default {
     verifyEmail,
     login,
     register,
-    resetPassword
+    resetPassword,
+    forgotPassword
     // existing login function, etc...
 }

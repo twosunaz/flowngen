@@ -48,6 +48,7 @@ jobs:
                   SMTP_PASS= ${{ secrets.SMTP_PASS }}
                   EMAIL_FROM= ${{ secrets.EMAIL_FROM }}
                   VERIFICATION_URL= ${{ secrets.VERIFICATION_URL }}
+                  RESET_PASSWORD_URL= ${{ secrets.RESET_PASSWORD_URL }}
 
                   # File system
                   BLOB_STORAGE_PATH=/root/.flowise/storage
