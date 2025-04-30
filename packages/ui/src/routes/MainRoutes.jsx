@@ -41,6 +41,7 @@ const VectorStoreQuery = Loadable(lazy(() => import('@/views/docstore/VectorStor
 
 // password reset routing
 const ResetPasswordPage = Loadable(lazy(() => import('@/views/credentials/ResetPasswordPage')))
+const EmailVerified = Loadable(lazy(() => import('@/views/auth/EmailVerified')))
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -127,6 +128,10 @@ const MainRoutes = {
         {
             path: '/reset-password',
             element: <ResetPasswordPage />
+        },
+        {
+            path: '/email-verified',
+            element: <EmailVerified />
         }
     ]
 }
