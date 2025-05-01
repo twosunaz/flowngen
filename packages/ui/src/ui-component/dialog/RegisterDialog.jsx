@@ -1,23 +1,31 @@
-// Template for RegisterDialog.jsx
 import { createPortal } from 'react-dom'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Dialog, DialogActions, DialogContent, Typography, DialogTitle } from '@mui/material'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { Input } from '@/ui-component/input/Input'
 import { toast } from 'react-toastify'
+import ReCAPTCHA from 'react-google-recaptcha'
 
 const RegisterDialog = ({ show, onClose }) => {
     const portalElement = document.getElementById('portal')
+    const recaptchaRef = useRef(null)
+
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [captchaToken, setCaptchaToken] = useState(null)
 
     const handleRegister = async () => {
+        if (!captchaToken) {
+            toast.error("🛡️ Please verify you're not a robot.")
+            return
+        }
+
         try {
             const response = await fetch('/api/v1/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password })
+                body: JSON.stringify({ username, email, password, captchaToken })
             })
 
             const data = await response.json()
@@ -26,9 +34,13 @@ const RegisterDialog = ({ show, onClose }) => {
                 onClose()
             } else {
                 toast.error('❌ Registration failed: ' + data.message)
+                recaptchaRef.current?.reset()
+                setCaptchaToken(null)
             }
         } catch (error) {
             toast.error('🚨 Network error: ' + error.message)
+            recaptchaRef.current?.reset()
+            setCaptchaToken(null)
         }
     }
 
@@ -42,6 +54,13 @@ const RegisterDialog = ({ show, onClose }) => {
                 <Input inputParam={{ label: 'Email', type: 'email' }} value={email} onChange={setEmail} />
                 <Typography>Password</Typography>
                 <Input inputParam={{ label: 'Password', type: 'password' }} value={password} onChange={setPassword} />
+                <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+                    <ReCAPTCHA
+                        sitekey='6LcFMisrAAAAAE2AbwVrFT_5eV5Y8I-pAKeNNd7y' // Your site key here
+                        ref={recaptchaRef}
+                        onChange={(token) => setCaptchaToken(token)}
+                    />
+                </div>
             </DialogContent>
             <DialogActions>
                 <StyledButton variant='contained' onClick={handleRegister}>

@@ -49,6 +49,7 @@ jobs:
                   EMAIL_FROM= ${{ secrets.EMAIL_FROM }}
                   VERIFICATION_URL= ${{ secrets.VERIFICATION_URL }}
                   RESET_PASSWORD_URL= ${{ secrets.RESET_PASSWORD_URL }}
+                  RECAPTCHA_SECRET_KEY=${{ secrets.RECAPTCHA_SECRET_KEY }}
 
                   # File system
                   BLOB_STORAGE_PATH=/root/.flowise/storage

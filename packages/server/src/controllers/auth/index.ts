@@ -74,25 +74,49 @@ const login = async (req: Request, res: Response) => {
 }
 const register = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { username, password, email } = req.body
-        if (!username || !password || !email) {
-            return res.status(400).json({ message: 'Username, password, and email are required' })
+        const { username, password, email, captchaToken } = req.body
+
+        // ✅ Validate fields
+        if (!username || !password || !email || !captchaToken) {
+            return res.status(400).json({ message: 'Username, password, email, and captcha token are required' })
+        }
+        type RecaptchaResponse = {
+            success: boolean
+            challenge_ts?: string
+            hostname?: string
+            score?: number
+            action?: string
+            'error-codes'?: string[]
+        }
+        // ✅ Verify reCAPTCHA token with Google
+        const verifyCaptcha = async (token: string): Promise<boolean> => {
+            const secret = process.env.RECAPTCHA_SECRET_KEY
+            const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `secret=${secret}&response=${token}`
+            })
+            const data = (await response.json()) as RecaptchaResponse
+            return data.success
         }
 
+        const isHuman = await verifyCaptcha(captchaToken)
+        if (!isHuman) {
+            return res.status(403).json({ message: 'CAPTCHA verification failed' })
+        }
+
+        // ✅ Continue with registration
         const appServer = getRunningExpressApp()
         const userRepo = appServer.AppDataSource.getRepository(User)
 
-        // ✅ Check if user already exists
         const existing = await userRepo.findOneBy({ username })
         if (existing) {
             return res.status(409).json({ message: 'Username already taken' })
         }
 
-        // ✅ Generate hashed password and verification token
         const hashedPassword = await bcrypt.hash(password, 10)
         const verificationToken = randomBytes(32).toString('hex')
 
-        // ✅ Save new user
         const newUser = new User()
         newUser.username = username
         newUser.password = hashedPassword
@@ -102,8 +126,6 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         newUser.verificationToken = verificationToken
 
         await userRepo.save(newUser)
-
-        // ✅ Send verification email
         await sendVerificationEmail(email, verificationToken)
 
         res.status(201).json({ message: 'User registered. Please verify your email.' })
@@ -111,13 +133,41 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         next(error)
     }
 }
+
 const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { email } = req.body
-        if (!email) {
-            return res.status(400).json({ message: 'Email is required' })
+        const { email, captchaToken } = req.body
+
+        if (!email || !captchaToken) {
+            return res.status(400).json({ message: 'Email and CAPTCHA token are required' })
+        }
+        type RecaptchaResponse = {
+            success: boolean
+            challenge_ts?: string
+            hostname?: string
+            score?: number
+            action?: string
+            'error-codes'?: string[]
+        }
+        // ✅ Verify reCAPTCHA token with Google
+        const verifyCaptcha = async (token: string): Promise<boolean> => {
+            const secret = process.env.RECAPTCHA_SECRET_KEY
+            const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `secret=${secret}&response=${token}`
+            })
+
+            const data = (await response.json()) as RecaptchaResponse
+            return data.success
         }
 
+        const isHuman = await verifyCaptcha(captchaToken)
+        if (!isHuman) {
+            return res.status(403).json({ message: 'CAPTCHA verification failed' })
+        }
+
+        // ✅ Proceed with reset logic
         const appServer = getRunningExpressApp()
         const userRepo = appServer.AppDataSource.getRepository(User)
 
