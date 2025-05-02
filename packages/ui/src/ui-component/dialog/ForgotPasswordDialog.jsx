@@ -51,7 +51,7 @@ const ForgotPasswordDialog = ({ show, onClose }) => {
 
                 <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
                     <ReCAPTCHA
-                        sitekey='6LcFMisrAAAAAE2AbwVrFT_5eV5Y8I-pAKeNNd7y' // Your public site key
+                        sitekey='6LfqQSsrAAAAAALXBpOZe31WJzzJUNEz_ZVgT5J4' // Your public site key
                         ref={recaptchaRef}
                         onChange={(token) => setCaptchaToken(token)}
                     />

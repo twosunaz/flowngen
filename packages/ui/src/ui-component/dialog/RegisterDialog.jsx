@@ -56,7 +56,7 @@ const RegisterDialog = ({ show, onClose }) => {
                 <Input inputParam={{ label: 'Password', type: 'password' }} value={password} onChange={setPassword} />
                 <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
                     <ReCAPTCHA
-                        sitekey='6LcFMisrAAAAAE2AbwVrFT_5eV5Y8I-pAKeNNd7y' // Your site key here
+                        sitekey='6LfqQSsrAAAAAALXBpOZe31WJzzJUNEz_ZVgT5J4' // Your site key here
                         ref={recaptchaRef}
                         onChange={(token) => setCaptchaToken(token)}
                     />
