@@ -137,7 +137,12 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         newUser.verificationToken = verificationToken
 
         await userRepo.save(newUser)
-        await sendVerificationEmail(email, verificationToken)
+        try {
+            await sendVerificationEmail(email, verificationToken)
+        } catch (err) {
+            console.error('[EMAIL ERROR] Failed to send verification email:', err)
+            return res.status(500).json({ message: 'Failed to send verification email' })
+        }
 
         res.status(201).json({ message: 'User registered. Please verify your email.' })
     } catch (error) {
@@ -200,7 +205,13 @@ const forgotPassword = async (req: Request, res: Response, next: NextFunction) =
         await userRepo.save(user)
 
         const resetUrl = `${process.env.RESET_PASSWORD_URL}${token}`
-        await sendResetEmail(email, token)
+        try {
+            await sendResetEmail(email, token)
+            console.log('[forgotPassword] Reset email sent')
+        } catch (err) {
+            console.error('[EMAIL ERROR] Failed to send reset email:', err)
+            return res.status(500).json({ message: 'Failed to send reset email' })
+        }
 
         res.status(200).json({ message: 'Reset link sent' })
     } catch (error) {
