@@ -3,10 +3,14 @@ import nodemailer from 'nodemailer'
 
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT),
+    port: Number(process.env.SMTP_PORT) || 587,
     auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
+    },
+    secure: false, // Mailtrap uses STARTTLS, not SMTPS
+    tls: {
+        rejectUnauthorized: false
     }
 })
 
