@@ -12,6 +12,7 @@ const ForgotPasswordDialog = ({ show, onClose }) => {
 
     const [email, setEmail] = useState('')
     const [captchaToken, setCaptchaToken] = useState(null)
+    const [loading, setLoading] = useState(false)
 
     const handleReset = async () => {
         if (!captchaToken) {
@@ -19,11 +20,13 @@ const ForgotPasswordDialog = ({ show, onClose }) => {
             return
         }
 
+        setLoading(true)
+
         try {
             const response = await fetch('/api/v1/auth/forgot-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, captchaToken })
+                body: JSON.stringify({ email: email.trim(), captchaToken })
             })
 
             const data = await response.json()
@@ -39,6 +42,8 @@ const ForgotPasswordDialog = ({ show, onClose }) => {
             toast.error('🚨 Network error: ' + error.message)
             recaptchaRef.current?.reset()
             setCaptchaToken(null)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -48,7 +53,6 @@ const ForgotPasswordDialog = ({ show, onClose }) => {
             <DialogContent>
                 <Typography>Email</Typography>
                 <Input inputParam={{ label: 'Email', type: 'email' }} value={email} onChange={setEmail} />
-
                 <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
                     <ReCAPTCHA
                         sitekey='6LfqQSsrAAAAAALXBpOZe31WJzzJUNEz_ZVgT5J4' // Your public site key
@@ -58,8 +62,8 @@ const ForgotPasswordDialog = ({ show, onClose }) => {
                 </div>
             </DialogContent>
             <DialogActions>
-                <StyledButton variant='contained' onClick={handleReset}>
-                    Send Reset Link
+                <StyledButton variant='contained' onClick={handleReset} disabled={loading}>
+                    {loading ? 'Sending...' : 'Send Reset Link'}
                 </StyledButton>
             </DialogActions>
         </Dialog>

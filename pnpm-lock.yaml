@@ -23,10 +23,13 @@ importers:
                 version: 3.0.2
             flowise-embed-react:
                 specifier: ^3.0.0
-                version: 3.0.0(@types/node@20.12.12)(flowise-embed@3.0.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.71.1)(terser@5.29.1)(typescript@5.5.2)
+                version: 3.0.0(@types/node@20.12.12)(flowise-embed@3.0.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.71.1)(terser@5.29.1)(typescript@5.5.2)
             jsonwebtoken:
                 specifier: ^9.0.2
                 version: 9.0.2
+            mailtrap:
+                specifier: ^4.1.0
+                version: 4.1.0(@types/nodemailer@6.4.17)(nodemailer@6.10.1)
             nodemailer:
                 specifier: ^6.10.1
                 version: 6.10.1
@@ -798,10 +801,10 @@ importers:
                 version: 16.4.5
             flowise-embed:
                 specifier: latest
-                version: 3.0.0
+                version: 3.0.1
             flowise-embed-react:
                 specifier: latest
-                version: 3.0.0(@types/node@20.12.12)(flowise-embed@3.0.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.71.1)(terser@5.29.1)(typescript@5.5.2)
+                version: 3.0.1(@types/node@20.12.12)(flowise-embed@3.0.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.71.1)(terser@5.29.1)(typescript@5.5.2)
             flowise-react-json-view:
                 specifier: '*'
                 version: 1.21.7(@types/react@18.2.65)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -9694,8 +9697,14 @@ packages:
             flowise-embed: '*'
             react: 18.x
 
-    flowise-embed@3.0.0:
-        resolution: { integrity: sha512-Zxo+47Fk15VdGHUGjr+vb93UUurtepKAlHWb7A2cFC2TUk4bo4x+fQFJXICI4P/Ms/XadoBt+lOFO/lcdmjwtA== }
+    flowise-embed-react@3.0.1:
+        resolution: { integrity: sha512-IGIUs8MyhKyyRpA2r8u9WnhMw9BYnqzLCADGOZNPL0Cr1eeUTEZ8RfJ5poAl04o1wyKmNfndkGNkIWkYvgo+Yg== }
+        peerDependencies:
+            flowise-embed: '*'
+            react: 18.x
+
+    flowise-embed@3.0.1:
+        resolution: { integrity: sha512-KWljWFUFedlGG2qnksxm/4o1pGnACZam6/cIREXLXTZpNCbmaaVEOaY/KVtXyLhWOJu/was0vDpraDU+5qe+tg== }
 
     flowise-react-json-view@1.21.7:
         resolution: { integrity: sha512-oFjwtSLJkUWk6waLh8heCQ4o9b60FJRA2X8LefaZp5WaJvj/Rr2HILjk+ocf1JkfTcq8jc6t2jfIybg4leWsaQ== }
@@ -11848,6 +11857,18 @@ packages:
 
     magic-string@0.30.10:
         resolution: { integrity: sha512-iIRwTIf0QKV3UAnYK4PU8uiEc4SRh5jX0mwpIwETPpHdhVM4f53RSwS/vXvN1JhGX+Cs7B8qIq3d6AH49O5fAQ== }
+
+    mailtrap@4.1.0:
+        resolution: { integrity: sha512-rCuumv0ZcLvxMukV8Pn9sh5hmk2TL23THrpwgE/yXwDfeJQdJGVENa2rNzGR9zcGsUK3LSXuyvjKrTwc21RBOQ== }
+        engines: { node: '>=16.20.1', yarn: '>=1.22.17' }
+        peerDependencies:
+            '@types/nodemailer': ^6.4.9
+            nodemailer: ^6.9.4
+        peerDependenciesMeta:
+            '@types/nodemailer':
+                optional: true
+            nodemailer:
+                optional: true
 
     make-dir@3.1.0:
         resolution: { integrity: sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw== }
@@ -21955,7 +21976,7 @@ snapshots:
 
     '@mendable/firecrawl-js@0.0.28':
         dependencies:
-            axios: 1.7.2(debug@4.3.7)
+            axios: 1.7.2
             dotenv: 16.4.5
             uuid: 9.0.1
             zod: 3.23.8
@@ -26068,7 +26089,7 @@ snapshots:
         transitivePeerDependencies:
             - debug
 
-    axios@1.7.2(debug@4.3.7):
+    axios@1.7.2:
         dependencies:
             follow-redirects: 1.15.6(debug@4.3.7)
             form-data: 4.0.0
@@ -26084,7 +26105,7 @@ snapshots:
         transitivePeerDependencies:
             - debug
 
-    axios@1.7.8:
+    axios@1.7.8(debug@4.3.7):
         dependencies:
             follow-redirects: 1.15.6(debug@4.3.7)
             form-data: 4.0.1
@@ -27085,7 +27106,7 @@ snapshots:
 
     cmake-js@7.3.0:
         dependencies:
-            axios: 1.7.2(debug@4.3.7)
+            axios: 1.7.8(debug@4.3.7)
             debug: 4.3.7(supports-color@8.1.1)
             fs-extra: 11.2.0
             lodash.isplainobject: 4.0.6
@@ -29208,10 +29229,10 @@ snapshots:
 
     flatted@3.3.1: {}
 
-    flowise-embed-react@3.0.0(@types/node@20.12.12)(flowise-embed@3.0.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.71.1)(terser@5.29.1)(typescript@5.5.2):
+    flowise-embed-react@3.0.0(@types/node@20.12.12)(flowise-embed@3.0.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.71.1)(terser@5.29.1)(typescript@5.5.2):
         dependencies:
             '@ladle/react': 2.5.1(@types/node@20.12.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.71.1)(terser@5.29.1)(typescript@5.5.2)
-            flowise-embed: 3.0.0
+            flowise-embed: 3.0.1
             react: 18.2.0
         transitivePeerDependencies:
             - '@types/node'
@@ -29225,12 +29246,29 @@ snapshots:
             - terser
             - typescript
 
-    flowise-embed@3.0.0:
+    flowise-embed-react@3.0.1(@types/node@20.12.12)(flowise-embed@3.0.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.71.1)(terser@5.29.1)(typescript@5.5.2):
+        dependencies:
+            '@ladle/react': 2.5.1(@types/node@20.12.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.71.1)(terser@5.29.1)(typescript@5.5.2)
+            flowise-embed: 3.0.1
+            react: 18.2.0
+        transitivePeerDependencies:
+            - '@types/node'
+            - less
+            - lightningcss
+            - react-dom
+            - sass
+            - stylus
+            - sugarss
+            - supports-color
+            - terser
+            - typescript
+
+    flowise-embed@3.0.1:
         dependencies:
             '@babel/core': 7.24.0
             '@microsoft/fetch-event-source': 2.0.1
             '@ts-stack/markdown': 1.5.0
-            axios: 1.7.8
+            axios: 1.7.8(debug@4.3.7)
             cors: 2.8.5
             cross-env: 7.0.3
             device-detector-js: 3.0.3
@@ -32069,6 +32107,15 @@ snapshots:
     magic-string@0.30.10:
         dependencies:
             '@jridgewell/sourcemap-codec': 1.4.15
+
+    mailtrap@4.1.0(@types/nodemailer@6.4.17)(nodemailer@6.10.1):
+        dependencies:
+            axios: 1.6.2(debug@4.3.4)
+        optionalDependencies:
+            '@types/nodemailer': 6.4.17
+            nodemailer: 6.10.1
+        transitivePeerDependencies:
+            - debug
 
     make-dir@3.1.0:
         dependencies:

@@ -18,7 +18,7 @@ const RegisterDialog = ({ show, onClose }) => {
 
     const handleRegister = async () => {
         if (!captchaToken) {
-            toast.error('Please complete the CAPTCHA before registering.')
+            toast.error('🛡️ Please complete the CAPTCHA before registering.')
             return
         }
 
@@ -28,20 +28,25 @@ const RegisterDialog = ({ show, onClose }) => {
             const response = await fetch('/api/v1/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password, captchaToken })
+                body: JSON.stringify({
+                    username: username.trim(),
+                    email: email.trim(),
+                    password,
+                    captchaToken
+                })
             })
 
             const data = await response.json()
             if (response.ok) {
-                toast.success('Registration successful! You can now log in.')
+                toast.success('✅ Registration successful! You can now log in.')
                 onClose()
             } else {
-                toast.error('Registration failed: ' + data.message)
+                toast.error('❌ Registration failed: ' + data.message)
                 recaptchaRef.current?.reset()
                 setCaptchaToken(null)
             }
         } catch (error) {
-            toast.error('Network error: ' + error.message)
+            toast.error('🚨 Network error: ' + error.message)
             recaptchaRef.current?.reset()
             setCaptchaToken(null)
         } finally {
