@@ -88,15 +88,26 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
             action?: string
             'error-codes'?: string[]
         }
-        // ✅ Verify reCAPTCHA token with Google
+
         const verifyCaptcha = async (token: string): Promise<boolean> => {
             const secret = process.env.RECAPTCHA_SECRET_KEY
+
+            if (!secret) {
+                console.error('🚨 Missing RECAPTCHA_SECRET_KEY in environment variables')
+                return false
+            }
+
             const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `secret=${secret}&response=${token}`
             })
+
             const data = (await response.json()) as RecaptchaResponse
+
+            // DEBUG LOGGING
+            console.log('[reCAPTCHA] Token verification response:', data)
+
             return data.success
         }
 
@@ -149,9 +160,15 @@ const forgotPassword = async (req: Request, res: Response, next: NextFunction) =
             action?: string
             'error-codes'?: string[]
         }
-        // ✅ Verify reCAPTCHA token with Google
+
         const verifyCaptcha = async (token: string): Promise<boolean> => {
             const secret = process.env.RECAPTCHA_SECRET_KEY
+
+            if (!secret) {
+                console.error('🚨 Missing RECAPTCHA_SECRET_KEY in environment variables')
+                return false
+            }
+
             const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -159,6 +176,10 @@ const forgotPassword = async (req: Request, res: Response, next: NextFunction) =
             })
 
             const data = (await response.json()) as RecaptchaResponse
+
+            // DEBUG LOGGING
+            console.log('[reCAPTCHA] Token verification response:', data)
+
             return data.success
         }
 
