@@ -14,12 +14,15 @@ const RegisterDialog = ({ show, onClose }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [captchaToken, setCaptchaToken] = useState(null)
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const handleRegister = async () => {
         if (!captchaToken) {
-            toast.error("🛡️ Please verify you're not a robot.")
+            toast.error('Please complete the CAPTCHA before registering.')
             return
         }
+
+        setIsSubmitting(true)
 
         try {
             const response = await fetch('/api/v1/auth/register', {
@@ -30,17 +33,19 @@ const RegisterDialog = ({ show, onClose }) => {
 
             const data = await response.json()
             if (response.ok) {
-                toast.success('✅ Registration successful! You can now log in.')
+                toast.success('Registration successful! You can now log in.')
                 onClose()
             } else {
-                toast.error('❌ Registration failed: ' + data.message)
+                toast.error('Registration failed: ' + data.message)
                 recaptchaRef.current?.reset()
                 setCaptchaToken(null)
             }
         } catch (error) {
-            toast.error('🚨 Network error: ' + error.message)
+            toast.error('Network error: ' + error.message)
             recaptchaRef.current?.reset()
             setCaptchaToken(null)
+        } finally {
+            setIsSubmitting(false)
         }
     }
 
@@ -56,15 +61,15 @@ const RegisterDialog = ({ show, onClose }) => {
                 <Input inputParam={{ label: 'Password', type: 'password' }} value={password} onChange={setPassword} />
                 <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
                     <ReCAPTCHA
-                        sitekey='6LfqQSsrAAAAAALXBpOZe31WJzzJUNEz_ZVgT5J4' // Your site key here
+                        sitekey='6LfqQSsrAAAAAALXBpOZe31WJzzJUNEz_ZVgT5J4'
                         ref={recaptchaRef}
                         onChange={(token) => setCaptchaToken(token)}
                     />
                 </div>
             </DialogContent>
             <DialogActions>
-                <StyledButton variant='contained' onClick={handleRegister}>
-                    Register
+                <StyledButton variant='contained' onClick={handleRegister} disabled={isSubmitting}>
+                    {isSubmitting ? 'Registering...' : 'Register'}
                 </StyledButton>
             </DialogActions>
         </Dialog>
