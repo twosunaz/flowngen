@@ -27,22 +27,25 @@ const createCredential = async (req: Request, res: Response, next: NextFunction)
 }
 
 const deleteCredentials = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('🔥 DELETE credentials called', req.params, req.query, req.body, req.user?.id)
+
     try {
-        if (typeof req.params === 'undefined' || !req.params.id) {
-            throw new InternalFlowiseError(
-                StatusCodes.PRECONDITION_FAILED,
-                `Error: credentialsController.deleteCredentials - id not provided!`
-            )
+        const credentialId = req.params?.id
+        if (!credentialId) {
+            console.warn('🚫 Attempted to delete credentials without providing an ID.')
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                error: 'Credential ID must be provided to delete a credential.'
+            })
         }
 
         // 🧠 Extract userId
         const user = req.user as { id: string } | undefined
-        if (!user || !user.id) {
+        if (!user?.id) {
             throw new InternalFlowiseError(StatusCodes.UNAUTHORIZED, 'User not authenticated')
         }
         const userId = user.id
 
-        const apiResponse = await credentialsService.deleteCredentials(req.params.id, userId)
+        const apiResponse = await credentialsService.deleteCredentials(credentialId, userId)
         return res.json(apiResponse)
     } catch (error) {
         next(error)
